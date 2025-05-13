@@ -45,6 +45,12 @@ public class UrgeHandler : MonoBehaviour
             _ => 0,
         };
     }
+
+    public void SatisfyUrge(Urge urge){
+        if(urge == Urge.Hunger) hungerUrge = 0;
+        else if (urge == Urge.Thirst) thirstUrge = 0;
+        else if (urge == Urge.Reproduction) reproductionUrge = 0;
+    }
 }
 
 public enum Urge {

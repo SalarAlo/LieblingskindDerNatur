@@ -16,7 +16,8 @@ public class ThirstUrgeHandler : UrgeResponder
         return Urge.Thirst;
     }
 
-    void Awake() {
+    protected override void Awake() {
+        base.Awake();
         movementComponent = GetComponent<AnimalMovementComponent>();   
         surrounderSensor = GetComponent<SurrounderSensor>();
     }
@@ -45,6 +46,7 @@ public class ThirstUrgeHandler : UrgeResponder
                 Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
                 foreach(var destination in possibleDestinations) {
                     path = Pathfinding.FindPath(position, destination);
+                    Debug.Log(path);
                     if(path != null)
                         break;
                 }
@@ -57,10 +59,9 @@ public class ThirstUrgeHandler : UrgeResponder
         } else {
             if(movementComponent.IsDoingMove()) return;
 
-            Debug.Log(path);
-            Debug.Log(path.Count);
             if(path.Count == 0)  {
-                Debug.Log("Reached Water");
+                FinishUrge();
+                return;
             }
             Vector3 currentDestination = new(path[0].x, 0, path[0].y);
             Debug.Log("Moving Towards Water");
@@ -93,10 +94,11 @@ public class ThirstUrgeHandler : UrgeResponder
     }
 
     private bool CheckForWater(out List<Vector2Int> waterPos) {
-        return surrounderSensor.TrySenseNearestWater(out waterPos);
+        return surrounderSensor.TrySenseNearestGrassNearWater(out waterPos);
     }
 
-    public override void OnUrgeChanged() {
+    protected override void FinishUrge() {
+        base.FinishUrge();
         foundWater = false;
         hasWaitedForPreviousWalkBeforeStarting = false;
         hasStartedWaitingForPreviousWalk = false;

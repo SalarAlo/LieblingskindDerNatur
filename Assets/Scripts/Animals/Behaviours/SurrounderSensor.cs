@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -17,20 +18,47 @@ public class SurrounderSensor : MonoBehaviour
         return true;
     }
 
-    public bool TrySenseNearestWater(out List<Vector2Int> position) {
+    public bool TrySenseNearestGrassNearWater(out List<Vector2Int> grassTile) {
         Vector2Int ownPosition = new((int)transform.position.x, (int)transform.position.z);
-        position = default;
+        grassTile = default;
+
         var sensingArea = GetSensingArea();
         var waterArea = WorldGeneration.Instance.WaterTiles;
-        
         var visibleWaterTiles = sensingArea.Intersect(waterArea).ToList();
-        if(visibleWaterTiles.Count == 0) return false;
-        
-        position = visibleWaterTiles
-            .OrderBy(p => (p - ownPosition).sqrMagnitude)
+
+        if (visibleWaterTiles.Count == 0)
+            return false;
+
+        HashSet<Vector2Int> candidateGrassTiles = new();
+
+        foreach (var water in visibleWaterTiles) {
+            foreach (var neighbor in GetCardinalNeighbors(water)) {
+                if (!Pathfinding.IsInBounds(neighbor)) continue;
+                if (waterArea.Contains(neighbor)) continue; // skip water
+                if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue; // skip blocked
+                candidateGrassTiles.Add(neighbor);
+            }
+        }
+
+        if (candidateGrassTiles.Count == 0)
+            return false;
+
+        grassTile = candidateGrassTiles
+            .OrderBy(pos => (pos - ownPosition).sqrMagnitude)
             .ToList();
+
         return true;
     }
+    private List<Vector2Int> GetCardinalNeighbors(Vector2Int pos) {
+        return new()
+        {
+            new(pos.x + 1, pos.y),
+            new(pos.x - 1, pos.y),
+            new(pos.x, pos.y + 1),
+            new(pos.x, pos.y - 1)
+        };
+    }
+
 
     public HashSet<Vector2Int> GetSensingArea() {
         Vector2Int ownPosition = new((int)transform.position.x, (int)transform.position.z);

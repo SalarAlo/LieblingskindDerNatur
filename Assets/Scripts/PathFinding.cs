@@ -25,10 +25,12 @@ public static class Pathfinding
 
             foreach (var neighbor in GetNeighbors(current))
             {
-                if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue;
                 if (!IsInBounds(neighbor)) continue;
+                if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue;
 
-                float tentativeG = gScore[current] + 1;
+                // ✔ Diagonale Bewegung erkennen (teurer)
+                float moveCost = (current.x != neighbor.x && current.y != neighbor.y) ? 1.4142f : 1f;
+                float tentativeG = gScore[current] + moveCost;
 
                 if (!gScore.ContainsKey(neighbor) || tentativeG < gScore[neighbor])
                 {
@@ -42,14 +44,18 @@ public static class Pathfinding
             }
         }
 
-        return null; // No path found
+        return null; // Kein Pfad gefunden
     }
 
+    // ✔ Heuristik für diagonale Bewegung (Octile Distance)
     private static float Heuristic(Vector2Int a, Vector2Int b)
     {
-        return Mathf.Abs(a.x - b.x) + Mathf.Abs(a.y - b.y); // Manhattan distance
+        int dx = Mathf.Abs(a.x - b.x);
+        int dy = Mathf.Abs(a.y - b.y);
+        return (dx + dy) + (1.4142f - 2) * Mathf.Min(dx, dy);
     }
 
+    // ✔ 8-Richtungsnachbarn (inkl. Diagonale)
     private static List<Vector2Int> GetNeighbors(Vector2Int pos)
     {
         return new()
@@ -57,7 +63,11 @@ public static class Pathfinding
             new(pos.x + 1, pos.y),
             new(pos.x - 1, pos.y),
             new(pos.x, pos.y + 1),
-            new(pos.x, pos.y - 1)
+            new(pos.x, pos.y - 1),
+            new(pos.x + 1, pos.y + 1),
+            new(pos.x - 1, pos.y + 1),
+            new(pos.x + 1, pos.y - 1),
+            new(pos.x - 1, pos.y - 1)
         };
     }
 
@@ -79,14 +89,16 @@ public static class Pathfinding
                pos.y >= 0 && pos.y < WorldGeneration.WORLD_SIZE;
     }
 
-    public static Vector2Int GetRandomWaklkablePosition() {
+    public static Vector2Int GetRandomWaklkablePosition()
+    {
         Vector2Int valid;
-        do {
+        do
+        {
             valid = new(
                 UnityEngine.Random.Range(0, WorldGeneration.WORLD_SIZE),
                 UnityEngine.Random.Range(0, WorldGeneration.WORLD_SIZE)
             );
-        } while(UnwalkableAreaMap.blockedArea.Contains(valid));
+        } while (UnwalkableAreaMap.blockedArea.Contains(valid));
         return valid;
     }
 }
