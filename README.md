@@ -21,7 +21,7 @@ Ein erweitertes **Rock-Paper-Scissors-Ökosystem**, gesteuert über Genetik und 
 - **Indirekte Steuerung**: Du kontrollierst keine Einheiten direkt – stattdessen beeinflusst du Gene, Nahrung und Ökosysteme.
 - **Mutationen**: Investiere Evolutionspunkte in genetische Veränderungen deiner Spezies – oder manipuliere die Schwächen deiner Gegner.
 - **Dynamisches Gleichgewicht**: Das System reagiert auf Überpopulation, Ressourcenknappheit und Ungleichgewicht.
-- **Verhalten & Sensorik**: Tiere erkennen Nahrung, Feinde oder Partner basierend auf Sichtbereich und Genetik.
+- **Verhalten & Sensorik**: Tiere erkennen Nahrung oder Partner basierend auf Sichtbereich und Genetik.
 
 ---
 
