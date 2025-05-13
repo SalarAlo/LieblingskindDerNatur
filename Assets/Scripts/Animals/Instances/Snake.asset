@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Snake
   m_EditorClassIdentifier: 
   Model: {fileID: 7344188900994559385, guid: 87d83975b3e380d4ebbd737090aad4b8, type: 3}
-  name: Snake
+  Name: 
   Speed: 2
-  Sense: 8
-  Fear: 10
-  UrgencySensitivity: 1
+  SenseRange: 0
+  MatingPossibilities: {x: 0, y: 0}
+  UrgencySensitivity: 0.5

@@ -1,13 +1,16 @@
 using System;
+using System.Collections.Generic;
+using Unity.Mathematics;
 using UnityEngine;
 
 public class ThirstUrgeHandler : UrgeResponder
 {
     private bool foundWater;
-    private bool hasWaitedForPreviousWalk;
+    private bool hasWaitedForPreviousWalkBeforeStarting;
+    private bool hasStartedWaitingForPreviousWalk;
     private AnimalMovementComponent movementComponent;
     private SurrounderSensor surrounderSensor;
-    private Vector2Int destination;
+    [SerializeField] private List<Vector2Int> path;
 
     public override Urge GetUrge() {
         return Urge.Thirst;
@@ -19,46 +22,83 @@ public class ThirstUrgeHandler : UrgeResponder
     }
 
     private void SetWaitDone() {
-        hasWaitedForPreviousWalk = true;
+        hasWaitedForPreviousWalkBeforeStarting = true;
     }
 
     public override void RespondToUrge() {
-        if(!hasWaitedForPreviousWalk && movementComponent.IsDoingMove()) {
-            movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
+
+        if(!hasWaitedForPreviousWalkBeforeStarting && movementComponent.IsDoingMove()) {
+            if(!hasStartedWaitingForPreviousWalk) {
+                movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
+                hasStartedWaitingForPreviousWalk = true;
+            }
+            Debug.Log("Still Waiting before starting search");
             return;
-        }
+        }  
 
         if(!foundWater) {
-            if(!movementComponent.IsDoingMove()) {
-                if(CheckForWater(out Vector2Int destination)) {
-                    foundWater = true;
-                } else {
-                    movementComponent.MoveTo(transform.position+GetRandomDir());
+            if(movementComponent.IsDoingMove()) return;
+
+            if(CheckForWater(out List<Vector2Int> possibleDestinations)) {
+                Debug.Log("Water found! Calculating Path...");
+                var posF = transform.position;
+                Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
+                foreach(var destination in possibleDestinations) {
+                    path = Pathfinding.FindPath(position, destination);
+                    if(path != null)
+                        break;
                 }
+                Debug.Log(path);
+                foundWater = true;
+            } else {
+                Debug.Log("No Water Found, moving to random direction");
+                GoToRandomDestination();
             }
         } else {
-            
+            if(movementComponent.IsDoingMove()) return;
+
+            Debug.Log(path);
+            Debug.Log(path.Count);
+            if(path.Count == 0)  {
+                Debug.Log("Reached Water");
+            }
+            Vector3 currentDestination = new(path[0].x, 0, path[0].y);
+            Debug.Log("Moving Towards Water");
+            movementComponent.MoveTo(currentDestination);
+            path.RemoveAt(0);
         }
     }
 
     private void MovementComponent_OnMoveDone() {
-        hasWaitedForPreviousWalk = true;
+        SetWaitDone();
+        movementComponent.OnMoveDone -= MovementComponent_OnMoveDone;
     }
 
-    private Vector3Int GetRandomDir() {
-        Vector3Int x;
+    private void GoToRandomDestination() {
+        Vector2Int destination;
+        var posF = transform.position;
+        Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
         do {
-            x = new(UnityEngine.Random.Range(-1, 2), 0, UnityEngine.Random.Range(-1, 2));
-        } while (x == Vector3Int.zero);
+            destination = position+GetRandomDir();
+        } while(!Pathfinding.IsInBounds(destination) || UnwalkableAreaMap.blockedArea.Contains(destination));
+        movementComponent.MoveTo(new(destination.x, 0, destination.y));
+    }
+
+    private Vector2Int GetRandomDir() {
+        Vector2Int x;
+        do {
+            x = new(UnityEngine.Random.Range(-1, 2),  UnityEngine.Random.Range(-1, 2));
+        } while (x == Vector2Int.zero);
         return x;
     }
 
-    private bool CheckForWater(out Vector2Int waterPos) {
+    private bool CheckForWater(out List<Vector2Int> waterPos) {
         return surrounderSensor.TrySenseNearestWater(out waterPos);
     }
 
     public override void OnUrgeChanged() {
         foundWater = false;
-        hasWaitedForPreviousWalk = false;
+        hasWaitedForPreviousWalkBeforeStarting = false;
+        hasStartedWaitingForPreviousWalk = false;
     }
 }

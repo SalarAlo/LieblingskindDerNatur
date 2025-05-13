@@ -17,7 +17,7 @@ public class SurrounderSensor : MonoBehaviour
         return true;
     }
 
-    public bool TrySenseNearestWater(out Vector2Int position) {
+    public bool TrySenseNearestWater(out List<Vector2Int> position) {
         Vector2Int ownPosition = new((int)transform.position.x, (int)transform.position.z);
         position = default;
         var sensingArea = GetSensingArea();
@@ -26,9 +26,9 @@ public class SurrounderSensor : MonoBehaviour
         var visibleWaterTiles = sensingArea.Intersect(waterArea).ToList();
         if(visibleWaterTiles.Count == 0) return false;
         
-        position = sensingArea
+        position = visibleWaterTiles
             .OrderBy(p => (p - ownPosition).sqrMagnitude)
-            .First();
+            .ToList();
         return true;
     }
 

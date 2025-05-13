@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Mouse
   m_EditorClassIdentifier: 
   Model: {fileID: 4887084523295724142, guid: d86589cfcfdad974398ae1c452cd85fa, type: 3}
-  name: Mouse
+  Name: 
   Speed: 3.5
-  Sense: 4
-  Fear: 10
-  UrgencySensitivity: 1
+  SenseRange: 6
+  MatingPossibilities: {x: 0, y: 0}
+  UrgencySensitivity: 0.5

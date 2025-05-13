@@ -13,8 +13,8 @@ MonoBehaviour:
   m_Name: Elephant
   m_EditorClassIdentifier: 
   Model: {fileID: 8164525682853068147, guid: 46373fbb410d3a3499242ed66c02733a, type: 3}
-  name: Elephant
+  Name: 
   Speed: 1
-  Sense: 12
-  Fear: 10
-  UrgencySensitivity: 1
+  SenseRange: 0
+  MatingPossibilities: {x: 0, y: 0}
+  UrgencySensitivity: 0.5
