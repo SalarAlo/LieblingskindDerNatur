@@ -226,6 +226,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 8475516722076022668}
+  lerpSpeed: 5
 --- !u!1 &1806329324667034383
 GameObject:
   m_ObjectHideFlags: 0
@@ -512,6 +513,7 @@ GameObject:
   - component: {fileID: 6259646062473726706}
   - component: {fileID: -5723580108919490183}
   - component: {fileID: -4544276488840632195}
+  - component: {fileID: 8145184759762623582}
   m_Layer: 0
   m_Name: Mouse
   m_TagString: Untagged
@@ -642,6 +644,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11b240602605ff049b38b5bc3208d829, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  path: []
+--- !u!114 &8145184759762623582
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887084523295724142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90711761af0f2d4b94585b0036c9803, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: []
 --- !u!1 &6771647652991262551
 GameObject:
   m_ObjectHideFlags: 0
@@ -732,6 +748,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 4557183099615910734}
+  lerpSpeed: 5
 --- !u!1 &7259266174453037860
 GameObject:
   m_ObjectHideFlags: 0
@@ -1000,6 +1017,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 7483145005670306163}
+  lerpSpeed: 5
 --- !u!1001 &5915914305523691755
 PrefabInstance:
   m_ObjectHideFlags: 0

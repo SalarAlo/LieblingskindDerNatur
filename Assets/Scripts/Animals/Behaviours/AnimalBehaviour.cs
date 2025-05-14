@@ -6,13 +6,15 @@ public class AnimalBehaviour : Eatable
     [SerializeField] private AnimalSO animal;
     private UrgeHandler urgeHandler;
     private NoneUrgeResponder noneUrgeResponder;
-    private ThirstUrgeHandler thirstUrgeResponder;
+    private ThirstUrgeResponder thirstUrgeResponder;
+    private HungerUrgeResponder hungerUrgeResponder;
 
     void Awake() {
         isFemale = Random.Range(0, 2) == 1;
         urgeHandler = GetComponent<UrgeHandler>();
         noneUrgeResponder = GetComponent<NoneUrgeResponder>();
-        thirstUrgeResponder = GetComponent<ThirstUrgeHandler>();
+        thirstUrgeResponder = GetComponent<ThirstUrgeResponder>();
+        hungerUrgeResponder = GetComponent<HungerUrgeResponder>();
     }
 
     public AnimalSO GetAnimalSO(){
@@ -28,10 +30,16 @@ public class AnimalBehaviour : Eatable
     }
 
     private void Update() {
-        if(urgeHandler.GetHighestUrge() == Urge.None)
-            noneUrgeResponder.RespondToUrge();
-        if(urgeHandler.GetHighestUrge() == Urge.Thirst)
-            thirstUrgeResponder.RespondToUrge();
-
+        switch (urgeHandler.GetHighestUrge()) {
+            case Urge.None:
+                noneUrgeResponder.RespondToUrge();
+                break;
+            case Urge.Thirst:
+                thirstUrgeResponder.RespondToUrge();
+                break;
+            case Urge.Hunger:
+                hungerUrgeResponder.RespondToUrge();
+                break;
+        }
     }
 }

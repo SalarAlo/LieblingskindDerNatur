@@ -7,16 +7,65 @@ using UnityEngine;
 public class SurrounderSensor : MonoBehaviour
 {
     private AnimalBehaviour behaviour;
+    private AnimalSO animalSO;
 
     void Awake() {
         behaviour = GetComponent<AnimalBehaviour>();
+        animalSO = behaviour.GetAnimalSO();
     }
 
-    public bool TrySenseFood(out Vector2Int position) {
-        Vector2Int ownPosition = new((int)transform.position.x, (int)transform.position.z);
-        position = default;
+    public bool TrySenseNearestGrassTilesNearFood(
+        out List<Vector2Int> grassTiles,
+        out List<Vector2Int> correspondingFoodTiles)
+    {
+        Vector2Int ownPos = new(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
+        var tempGrassTiles = new List<Vector2Int>();
+        var tempFoodTiles = new List<Vector2Int>();
+
+        var sensingArea = GetSensingArea();
+        var foodArea = FoodGeneration.Instance.GetFoodTiles();
+
+        var eatableFoodArea = foodArea.Where(food => animalSO.EatableFood.Contains(food.FoodSO)).ToList();
+
+        foreach (var food in eatableFoodArea) {
+            if (!sensingArea.Contains(food.Position)) continue;
+
+            foreach (var neighbor in GetCardinalNeighbors(food.Position)) {
+                if (!Pathfinding.IsInBounds(neighbor)) continue;
+                if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue;
+
+                tempGrassTiles.Add(neighbor);
+                tempFoodTiles.Add(food.Position);
+            }
+        }
+
+        if (tempGrassTiles.Count == 0) {
+            grassTiles = null;
+            correspondingFoodTiles = null;
+            return false;
+        }
+
+        // Create list of pairs and sort
+        var combined = new List<(Vector2Int Grass, Vector2Int Food)>();
+        for (int i = 0; i < tempGrassTiles.Count; i++) {
+            combined.Add((tempGrassTiles[i], tempFoodTiles[i]));
+        }
+
+        combined.Sort((a, b) =>
+            ((a.Grass - ownPos).sqrMagnitude).CompareTo((b.Grass - ownPos).sqrMagnitude));
+
+        // Output
+        grassTiles = new();
+        correspondingFoodTiles = new();
+        foreach (var pair in combined) {
+            grassTiles.Add(pair.Grass);
+            correspondingFoodTiles.Add(pair.Food);
+        }
+
         return true;
     }
+
+
 
     public bool TrySenseNearestGrassNearWater(out List<Vector2Int> grassTile) {
         Vector2Int ownPosition = new((int)transform.position.x, (int)transform.position.z);

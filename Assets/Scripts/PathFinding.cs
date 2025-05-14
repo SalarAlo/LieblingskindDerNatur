@@ -20,8 +20,11 @@ public static class Pathfinding
         {
             var current = openSet.Dequeue();
 
-            if (current == goal)
-                return ReconstructPath(cameFrom, current);
+            if (current == goal) {
+                var path = ReconstructPath(cameFrom, current);
+                path.RemoveAt(0);
+                return path;
+            }
 
             foreach (var neighbor in GetNeighbors(current))
             {

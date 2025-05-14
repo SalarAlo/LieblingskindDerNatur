@@ -7,9 +7,9 @@ using UnityEngine.UIElements;
 public class UrgeHandler : MonoBehaviour
 {
     [SerializeField] private float urgeIncreaseTime = 1f / 100f;
-    private const float hungerIncrease = 1.3f;
-    private const float thirstIncrease = 4;
-    private const float reproductionIncrease = 0.7f;
+    private const float hungerIncrease = 1f;
+    private const float thirstIncrease = 1.6f;
+    private const float reproductionIncrease = 0.4f;
     private float urgeSensitivity;
     private float reproductionUrge;
     private float hungerUrge;

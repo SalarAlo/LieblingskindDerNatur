@@ -22,10 +22,11 @@ public class FoodGeneration : MonoBehaviour
         for(int i = 0; i < spawnAmountPerDay; i++) {
             Vector3 spawnPos = GetWalkableCoord();
             var randomSO = foodObjects[UnityEngine.Random.Range(0, foodObjects.Count)];
-            Instantiate(randomSO.Model, spawnPos, Quaternion.identity);
+            var gameObj = Instantiate(randomSO.Model, spawnPos, Quaternion.identity);
             food.Add(new() {
-                foodSO = randomSO,
-                position = new((int)spawnPos.x, (int)spawnPos.y)
+                FoodSO = randomSO,
+                Position = new((int)spawnPos.x, (int)spawnPos.z),
+                Instance = gameObj
             });
         }
     }
@@ -34,14 +35,34 @@ public class FoodGeneration : MonoBehaviour
         Vector2Int valid = Pathfinding.GetRandomWaklkablePosition();
         return new(valid.x, 0, valid.y);
     }
+
+    public HashSet<FoodInstance> GetFoodTiles() {
+        return food;
+    }
+
+    public void RemoveFood(Vector2Int position){
+        FoodInstance? toRemove = null;
+        foreach (var f in food) {
+            if (f.Position == position) {
+                toRemove = f;
+                break;
+            }
+        }
+        if (toRemove.HasValue) {
+            Debug.Log("Food not found");
+            Destroy(toRemove.Value.Instance);
+            food.Remove(toRemove.Value);
+        }
+    }
 }
 
 public struct FoodInstance : IEquatable<FoodInstance> {
-    public Vector2Int position;
-    public FoodSO foodSO;
+    public Vector2Int Position;
+    public FoodSO FoodSO;
+    public GameObject Instance;
 
     public bool Equals(FoodInstance other) {
-        return position.Equals(other.position) && Equals(foodSO, other.foodSO);
+        return Position.Equals(other.Position) && Equals(FoodSO, other.FoodSO);
     }
 
     public override bool Equals(object obj) {
@@ -51,8 +72,8 @@ public struct FoodInstance : IEquatable<FoodInstance> {
     public override int GetHashCode() {
         unchecked {
             int hash = 17;
-            hash = hash * 31 + position.GetHashCode();
-            hash = hash * 31 + (foodSO != null ? foodSO.GetHashCode() : 0);
+            hash = hash * 31 + Position.GetHashCode();
+            hash = hash * 31 + (FoodSO != null ? FoodSO.GetHashCode() : 0);
             return hash;
         }
     }

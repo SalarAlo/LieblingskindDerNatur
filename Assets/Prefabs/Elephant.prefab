@@ -268,6 +268,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 3128527691893193169}
+  lerpSpeed: 5
 --- !u!1 &3192767101860150359
 GameObject:
   m_ObjectHideFlags: 0
@@ -358,6 +359,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 7077087981292357495}
+  lerpSpeed: 5
 --- !u!1 &3353936747403028062
 GameObject:
   m_ObjectHideFlags: 0
@@ -778,6 +780,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fill: {fileID: 519656089367530918}
+  lerpSpeed: 5
 --- !u!1 &7872151706962629560
 GameObject:
   m_ObjectHideFlags: 0
@@ -870,6 +873,7 @@ GameObject:
   - component: {fileID: 4780226180756577620}
   - component: {fileID: 1592764958493101400}
   - component: {fileID: 2272692910499202448}
+  - component: {fileID: -3725405182125530367}
   m_Layer: 0
   m_Name: Elephant
   m_TagString: Untagged
@@ -1000,6 +1004,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 11b240602605ff049b38b5bc3208d829, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  path: []
+--- !u!114 &-3725405182125530367
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8164525682853068147}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f90711761af0f2d4b94585b0036c9803, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  path: []
 --- !u!1001 &5132131052097388133
 PrefabInstance:
   m_ObjectHideFlags: 0

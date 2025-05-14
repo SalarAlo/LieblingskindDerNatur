@@ -12,9 +12,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b686d3bdb95f6864e983ca0b341aaa4c, type: 3}
   m_Name: Mouse
   m_EditorClassIdentifier: 
+  EatableFood:
+  - {fileID: 11400000, guid: 5903f1978a23ea148a082e78bf1a59d0, type: 2}
+  - {fileID: 11400000, guid: d2f24078829e47b459cad130f83fdc4b, type: 2}
   Model: {fileID: 4887084523295724142, guid: d86589cfcfdad974398ae1c452cd85fa, type: 3}
   Name: 
   Speed: 3.5
-  SenseRange: 6
+  SenseRange: 3
   MatingPossibilities: {x: 0, y: 0}
-  UrgencySensitivity: 0.5
+  UrgencySensitivity: 0.4

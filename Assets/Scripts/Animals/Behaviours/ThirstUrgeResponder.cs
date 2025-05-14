@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Mathematics;
 using UnityEngine;
 
-public class ThirstUrgeHandler : UrgeResponder
+public class ThirstUrgeResponder : UrgeResponder
 {
     private bool foundWater;
     private bool hasWaitedForPreviousWalkBeforeStarting;
@@ -41,7 +41,6 @@ public class ThirstUrgeHandler : UrgeResponder
             if(movementComponent.IsDoingMove()) return;
 
             if(CheckForWater(out List<Vector2Int> possibleDestinations)) {
-                Debug.Log("Water found! Calculating Path...");
                 var posF = transform.position;
                 Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
                 foreach(var destination in possibleDestinations) {
@@ -50,10 +49,8 @@ public class ThirstUrgeHandler : UrgeResponder
                     if(path != null)
                         break;
                 }
-                Debug.Log(path);
                 foundWater = true;
             } else {
-                Debug.Log("No Water Found, moving to random direction");
                 GoToRandomDestination();
             }
         } else {
@@ -64,7 +61,6 @@ public class ThirstUrgeHandler : UrgeResponder
                 return;
             }
             Vector3 currentDestination = new(path[0].x, 0, path[0].y);
-            Debug.Log("Moving Towards Water");
             movementComponent.MoveTo(currentDestination);
             path.RemoveAt(0);
         }
