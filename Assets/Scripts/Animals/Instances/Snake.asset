@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Snake
   m_EditorClassIdentifier: 
   EatableFood:
-  - {fileID: 11400000, guid: aafdb0767c88a464ab63d85d84c3b6bd, type: 2}
-  - {fileID: 11400000, guid: 5903f1978a23ea148a082e78bf1a59d0, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   Model: {fileID: 7344188900994559385, guid: 87d83975b3e380d4ebbd737090aad4b8, type: 3}
-  Name: 
+  Name: Snake
   Speed: 2
   SenseRange: 5
   MatingPossibilities: {x: 0, y: 0}

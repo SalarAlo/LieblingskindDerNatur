@@ -744,6 +744,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c197f667ebe284890729ae4be12d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefab: {fileID: 7344188900994559385}
   isFemale: 0
   animal: {fileID: 11400000, guid: 8f4baf5f10e884245817d2eee18265f9, type: 2}
 --- !u!114 &-898908568494550504

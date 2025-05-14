@@ -1,6 +1,7 @@
+using System.Net.Sockets;
 using UnityEngine;
 
-public class AnimalBehaviour : Eatable
+public class AnimalBehaviour : Food
 {
     [SerializeField] private bool isFemale;
     [SerializeField] private AnimalSO animal;
@@ -29,7 +30,8 @@ public class AnimalBehaviour : Eatable
         return isFemale;
     }
 
-    private void Update() {
+    protected override void Update() {
+        base.Update();
         switch (urgeHandler.GetHighestUrge()) {
             case Urge.None:
                 noneUrgeResponder.RespondToUrge();

@@ -50,8 +50,7 @@ public class AnimalMovementComponent : MonoBehaviour
 
     void Update()
     {
-        if (isMoving)
-        {
+        if (isMoving) {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / jumpTime);
 
@@ -85,4 +84,3 @@ public class AnimalMovementComponent : MonoBehaviour
     public bool IsDoingMove() =>
         isWaiting || isMoving;
 }
-

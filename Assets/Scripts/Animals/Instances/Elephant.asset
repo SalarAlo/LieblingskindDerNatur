@@ -13,10 +13,11 @@ MonoBehaviour:
   m_Name: Elephant
   m_EditorClassIdentifier: 
   EatableFood:
-  - {fileID: 11400000, guid: aafdb0767c88a464ab63d85d84c3b6bd, type: 2}
-  - {fileID: 11400000, guid: d2f24078829e47b459cad130f83fdc4b, type: 2}
+  - {fileID: 0}
+  - {fileID: 0}
+  - {fileID: 0}
   Model: {fileID: 8164525682853068147, guid: 46373fbb410d3a3499242ed66c02733a, type: 3}
-  Name: 
+  Name: Elephant
   Speed: 1
   SenseRange: 6
   MatingPossibilities: {x: 0, y: 0}

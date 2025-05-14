@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -11,6 +12,7 @@ public class HungerUrgeResponder : UrgeResponder
     private SurrounderSensor surrounderSensor;
     private Vector2Int destination;
     [SerializeField] private List<Vector2Int> path;
+    private WorldPlacable target;
 
     public override Urge GetUrge() {
         return Urge.Hunger;
@@ -25,22 +27,27 @@ public class HungerUrgeResponder : UrgeResponder
     private void SetWaitDone() {
         hasWaitedForPreviousWalkBeforeStarting = true;
     }
-
     public override void RespondToUrge() {
+        Debug.Log("[HungerUrgeResponder] RespondToUrge called.");
+
         if(!hasWaitedForPreviousWalkBeforeStarting && movementComponent.IsDoingMove()) {
+            Debug.Log("[HungerUrgeResponder] Waiting for previous move to finish.");
             if(!hasStartedWaitingForPreviousWalk) {
                 movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
                 hasStartedWaitingForPreviousWalk = true;
+                Debug.Log("[HungerUrgeResponder] Subscribed to OnMoveDone event.");
             }
             return;
         }  
 
         if(!foundFood) {
-            if(movementComponent.IsDoingMove()) return;
+            if(movementComponent.IsDoingMove()) {
+                return;
+            }
 
             if(CheckForFood(out List<Vector2Int> possibleDestinations, out List<Vector2Int> foodPos)) {
-                var posF = transform.position;
-                Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
+                var position = transform.position.GetVector2Int();
+
                 for(int i = 0; i < possibleDestinations.Count; i++) {
                     var possibleDest = possibleDestinations[i];
                     path = Pathfinding.FindPath(position, possibleDest);
@@ -54,11 +61,23 @@ public class HungerUrgeResponder : UrgeResponder
                     return;
                 }
                 foundFood = true;
+                target = WorldPlacable.GetWorldPlacableAt(destination);
             } else {
                 GoToRandomDestination();
             }     
         } else {
-            if(movementComponent.IsDoingMove()) return;
+            if(movementComponent.IsDoingMove()) {
+                return;
+            }
+
+            if(target == null) {
+                foundFood = false;
+                return;
+            }
+
+            // Todo check for nearest neighbour and set that to target
+            var position = transform.position.GetVector2Int();
+            path = Pathfinding.FindPath(position, target.Position);
 
             if(path.Count == 0)  {
                 FoodGeneration.Instance.RemoveFood(destination);
@@ -96,6 +115,16 @@ public class HungerUrgeResponder : UrgeResponder
 
     private bool CheckForFood(out List<Vector2Int> grassTileFoodPos, out List<Vector2Int> foodPos) {
         return surrounderSensor.TrySenseNearestGrassTilesNearFood(out grassTileFoodPos, out foodPos);
+    }
+    private List<Vector2Int> GetCardinalNeighbors() {
+        Vector2Int pos = transform.position.GetVector2Int();
+        return new()
+        {
+            new(pos.x + 1, pos.y),
+            new(pos.x - 1, pos.y),
+            new(pos.x, pos.y + 1),
+            new(pos.x, pos.y - 1)
+        };
     }
 
     protected override void FinishUrge() {

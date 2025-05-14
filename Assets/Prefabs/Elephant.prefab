@@ -910,6 +910,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c197f667ebe284890729ae4be12d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefab: {fileID: 8164525682853068147}
   isFemale: 0
   animal: {fileID: 11400000, guid: f9d4cbc0c5799024d8b5af7d2faad0dd, type: 2}
 --- !u!114 &-1776153330096996157

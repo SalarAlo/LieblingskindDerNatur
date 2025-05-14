@@ -550,6 +550,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 28c197f667ebe284890729ae4be12d30, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  prefab: {fileID: 4887084523295724142}
   isFemale: 0
   animal: {fileID: 11400000, guid: 7c4efb8a6ac6d9f41818d6ec4cfa4b2f, type: 2}
 --- !u!114 &-4726113241570844040

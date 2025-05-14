@@ -9,7 +9,8 @@ public class NoneUrgeResponder : UrgeResponder
     private bool reachedDestination;
     private Vector3Int currentDestination;
 
-    void Awake() {
+    protected override void Awake() {
+        base.Awake();
         reachedDestination = true;
         movementComponent = GetComponent<AnimalMovementComponent>();
         movementComponent.OnMoveDone += MovementComponent_OnMoveDone;

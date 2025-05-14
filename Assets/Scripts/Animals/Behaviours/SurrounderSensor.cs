@@ -18,11 +18,13 @@ public class SurrounderSensor : MonoBehaviour
         out List<Vector2Int> grassTiles,
         out List<Vector2Int> correspondingFoodTiles)
     {
-        Vector2Int ownPos = new(Mathf.RoundToInt(transform.position.x), Mathf.RoundToInt(transform.position.z));
+        Vector2Int ownPos = transform.position.GetVector2Int();
         var tempGrassTiles = new List<Vector2Int>();
         var tempFoodTiles = new List<Vector2Int>();
 
+
         var sensingArea = GetSensingArea();
+
         var foodArea = FoodGeneration.Instance.GetFoodTiles();
 
         var eatableFoodArea = foodArea.Where(food => animalSO.EatableFood.Contains(food.FoodSO)).ToList();
@@ -61,7 +63,6 @@ public class SurrounderSensor : MonoBehaviour
             grassTiles.Add(pair.Grass);
             correspondingFoodTiles.Add(pair.Food);
         }
-
         return true;
     }
 
