@@ -33,7 +33,6 @@ public class ThirstUrgeResponder : UrgeResponder
                 movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
                 hasStartedWaitingForPreviousWalk = true;
             }
-            Debug.Log("Still Waiting before starting search");
             return;
         }  
 
@@ -45,7 +44,6 @@ public class ThirstUrgeResponder : UrgeResponder
                 Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
                 foreach(var destination in possibleDestinations) {
                     path = Pathfinding.FindPath(position, destination);
-                    Debug.Log(path);
                     if(path != null)
                         break;
                 }

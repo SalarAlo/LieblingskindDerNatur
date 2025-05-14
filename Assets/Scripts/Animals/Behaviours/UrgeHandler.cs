@@ -8,8 +8,8 @@ public class UrgeHandler : MonoBehaviour
 {
     [SerializeField] private float urgeIncreaseTime = 1f / 100f;
     private const float hungerIncrease = 1f;
-    private const float thirstIncrease = 1.6f;
-    private const float reproductionIncrease = 0.4f;
+    private const float thirstIncrease = 0f;
+    private const float reproductionIncrease = 0.0f;
     private float urgeSensitivity;
     private float reproductionUrge;
     private float hungerUrge;

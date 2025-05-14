@@ -9,7 +9,7 @@ public class AnimalBehaviourUI : MonoBehaviour
 
     private UrgeHandler handler;
 
-    void Awake() {
+    protected void Awake() {
         handler = GetComponent<UrgeHandler>();
     }
 

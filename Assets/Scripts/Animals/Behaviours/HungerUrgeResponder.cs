@@ -1,10 +1,12 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.InteropServices;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HungerUrgeResponder : UrgeResponder
-{
+public class HungerUrgeResponder : UrgeResponder {
     private bool foundFood;
     private bool hasWaitedForPreviousWalkBeforeStarting;
     private bool hasStartedWaitingForPreviousWalk;
@@ -14,112 +16,131 @@ public class HungerUrgeResponder : UrgeResponder
     [SerializeField] private List<Vector2Int> path;
     private WorldPlacable target;
 
-    public override Urge GetUrge() {
-        return Urge.Hunger;
-    }
+    public override Urge GetUrge() => Urge.Hunger;
 
     protected override void Awake() {
         base.Awake();
-        movementComponent = GetComponent<AnimalMovementComponent>();   
+        movementComponent = GetComponent<AnimalMovementComponent>();
         surrounderSensor = GetComponent<SurrounderSensor>();
     }
 
-    private void SetWaitDone() {
-        hasWaitedForPreviousWalkBeforeStarting = true;
-    }
     public override void RespondToUrge() {
-        Debug.Log("[HungerUrgeResponder] RespondToUrge called.");
-
-        if(!hasWaitedForPreviousWalkBeforeStarting && movementComponent.IsDoingMove()) {
-            Debug.Log("[HungerUrgeResponder] Waiting for previous move to finish.");
-            if(!hasStartedWaitingForPreviousWalk) {
-                movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
-                hasStartedWaitingForPreviousWalk = true;
-                Debug.Log("[HungerUrgeResponder] Subscribed to OnMoveDone event.");
-            }
+        if (HandleWaitForPreviousWalk())
             return;
-        }  
 
-        if(!foundFood) {
-            if(movementComponent.IsDoingMove()) {
-                return;
-            }
-
-            if(CheckForFood(out List<Vector2Int> possibleDestinations, out List<Vector2Int> foodPos)) {
-                var position = transform.position.GetVector2Int();
-
-                for(int i = 0; i < possibleDestinations.Count; i++) {
-                    var possibleDest = possibleDestinations[i];
-                    path = Pathfinding.FindPath(position, possibleDest);
-                    if(path != null) {
-                        destination = foodPos[i];
-                        break;
-                    }
-                }
-                if(path==null) {
-                    GoToRandomDestination();
-                    return;
-                }
-                foundFood = true;
-                target = WorldPlacable.GetWorldPlacableAt(destination);
-            } else {
+        if (!foundFood) {
+            if (!TryFindPathToFood())
                 GoToRandomDestination();
-            }     
         } else {
-            if(movementComponent.IsDoingMove()) {
-                return;
-            }
-
-            if(target == null) {
-                foundFood = false;
-                return;
-            }
-
-            // Todo check for nearest neighbour and set that to target
-            var position = transform.position.GetVector2Int();
-            path = Pathfinding.FindPath(position, target.Position);
-
-            if(path.Count == 0)  {
-                FoodGeneration.Instance.RemoveFood(destination);
-                FinishUrge();
-                return;
-            }
-            Vector3 currentDestination = new(path[0].x, 0, path[0].y);
-            movementComponent.MoveTo(currentDestination);
-            path.RemoveAt(0);
+            MoveTowardFood();
         }
     }
 
+    private bool HandleWaitForPreviousWalk() {
+        if (!hasWaitedForPreviousWalkBeforeStarting && movementComponent.IsDoingMove()) {
+            if (!hasStartedWaitingForPreviousWalk) {
+                movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
+                hasStartedWaitingForPreviousWalk = true;
+            }
+            return true;
+        }
+        return false;
+    }
+
+    private bool TryFindPathToFood() {
+        if (movementComponent.IsDoingMove())
+            return true;
+
+        if (CheckForFood(out List<Vector2Int> possibleDestinations, out List<Vector2Int> foodPos)) {
+            var position = transform.position.ToVector2Int();
+
+            for (int i = 0; i < possibleDestinations.Count; i++) {
+                path = Pathfinding.FindPath(position, possibleDestinations[i]);
+                if (path != null) {
+                    destination = foodPos[i];
+                    target = WorldPlacable.GetWorldPlacableAt(destination);
+                    foundFood = true;
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    private void MoveTowardFood() {
+        if (movementComponent.IsDoingMove())
+            return;
+
+        if (target == null) {
+            foundFood = false;
+            return;
+        }
+
+        var position = transform.position.ToVector2Int();
+        if(!TryGetNearestGrassTileTo(target.Position, out Vector2Int nearestGrassTile)) {
+            foundFood = false;
+            return;
+        }
+        path = Pathfinding.FindPath(position, nearestGrassTile);
+
+        if (path == null || path.Count == 0) {
+            if(target is AnimalBehaviour) {
+                Destroy(target.gameObject);
+            } else {
+                FoodGeneration.Instance.RemoveFood(destination);
+            }
+            FinishUrge();
+            return;
+        }
+
+        Vector3 currentDestination = new(path[0].x, 0, path[0].y);
+        movementComponent.MoveTo(currentDestination);
+        path.RemoveAt(0);
+    }
+
+    private bool TryGetNearestGrassTileTo(Vector2Int position, out Vector2Int nearestGrass) {
+        nearestGrass = default;
+        Vector2Int ownPosition = transform.position.ToVector2Int();
+        List<Vector2Int> grassTiles = GetCardinalNeighbors(position);
+        grassTiles = grassTiles
+            .Where(tile => Pathfinding.IsInBounds(tile) && !UnwalkableAreaMap.blockedArea.Contains(tile))
+            .OrderBy(validTile => (validTile - ownPosition).sqrMagnitude)
+            .ToList();
+        if(grassTiles.Count == 0) return false;
+        nearestGrass = grassTiles[0];
+        return true;
+    }
+
     private void MovementComponent_OnMoveDone() {
-        SetWaitDone();
+        hasWaitedForPreviousWalkBeforeStarting = true;
         movementComponent.OnMoveDone -= MovementComponent_OnMoveDone;
     }
 
     private void GoToRandomDestination() {
         Vector2Int destination;
-        var posF = transform.position;
-        Vector2Int position = new(Mathf.RoundToInt(posF.x), Mathf.RoundToInt(posF.z));
+        Vector2Int position = transform.position.ToVector2Int();
+
         do {
-            destination = position+GetRandomDir();
-        } while(!Pathfinding.IsInBounds(destination) || UnwalkableAreaMap.blockedArea.Contains(destination));
+            destination = position + GetRandomDir();
+        } while (!Pathfinding.IsInBounds(destination) || UnwalkableAreaMap.blockedArea.Contains(destination));
+
         movementComponent.MoveTo(new(destination.x, 0, destination.y));
     }
 
     private Vector2Int GetRandomDir() {
-        Vector2Int x;
+        Vector2Int dir;
         do {
-            x = new(UnityEngine.Random.Range(-1, 2),  UnityEngine.Random.Range(-1, 2));
-        } while (x == Vector2Int.zero);
-        return x;
+            dir = new(UnityEngine.Random.Range(-1, 2), UnityEngine.Random.Range(-1, 2));
+        } while (dir == Vector2Int.zero);
+        return dir;
     }
 
     private bool CheckForFood(out List<Vector2Int> grassTileFoodPos, out List<Vector2Int> foodPos) {
         return surrounderSensor.TrySenseNearestGrassTilesNearFood(out grassTileFoodPos, out foodPos);
     }
-    private List<Vector2Int> GetCardinalNeighbors() {
-        Vector2Int pos = transform.position.GetVector2Int();
-        return new()
-        {
+
+    private List<Vector2Int> GetCardinalNeighbors(Vector2Int pos) {
+        return new() {
             new(pos.x + 1, pos.y),
             new(pos.x - 1, pos.y),
             new(pos.x, pos.y + 1),
@@ -129,6 +150,7 @@ public class HungerUrgeResponder : UrgeResponder
 
     protected override void FinishUrge() {
         base.FinishUrge();
+        target = null;
         foundFood = false;
         hasWaitedForPreviousWalkBeforeStarting = false;
         hasStartedWaitingForPreviousWalk = false;

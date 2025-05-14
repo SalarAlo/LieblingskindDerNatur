@@ -13,9 +13,9 @@ MonoBehaviour:
   m_Name: Snake
   m_EditorClassIdentifier: 
   EatableFood:
-  - {fileID: 0}
-  - {fileID: 0}
-  - {fileID: 0}
+  - {fileID: 1520245610986724619, guid: 6f4958a5ca788e245b586b10afbf54bc, type: 3}
+  - {fileID: 6129676464645990933, guid: 7d6e397b541c32a409c22f7d1a835ec6, type: 3}
+  Prey: {fileID: 11400000, guid: 7c4efb8a6ac6d9f41818d6ec4cfa4b2f, type: 2}
   Model: {fileID: 7344188900994559385, guid: 87d83975b3e380d4ebbd737090aad4b8, type: 3}
   Name: Snake
   Speed: 2

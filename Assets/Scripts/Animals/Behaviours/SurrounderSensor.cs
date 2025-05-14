@@ -18,7 +18,7 @@ public class SurrounderSensor : MonoBehaviour
         out List<Vector2Int> grassTiles,
         out List<Vector2Int> correspondingFoodTiles)
     {
-        Vector2Int ownPos = transform.position.GetVector2Int();
+        Vector2Int ownPos = transform.position.ToVector2Int();
         var tempGrassTiles = new List<Vector2Int>();
         var tempFoodTiles = new List<Vector2Int>();
 
@@ -27,17 +27,20 @@ public class SurrounderSensor : MonoBehaviour
 
         var foodArea = FoodGeneration.Instance.GetFoodTiles();
 
-        var eatableFoodArea = foodArea.Where(food => animalSO.EatableFood.Contains(food.FoodSO)).ToList();
+        var eatableFoodArea = foodArea.Where(food => animalSO.EatableFood.Contains(food.FoodSO)).Select(x => x.Position).ToList();
+        var preyLocation = WorldPlacable.GetAnimals(animalSO.Prey).Select(a => a.Position).ToList();
+        Debug.Log(preyLocation.Count);
+        eatableFoodArea.AddRange(preyLocation);
 
-        foreach (var food in eatableFoodArea) {
-            if (!sensingArea.Contains(food.Position)) continue;
+        foreach (var position in eatableFoodArea) {
+            if (!sensingArea.Contains(position)) continue;
 
-            foreach (var neighbor in GetCardinalNeighbors(food.Position)) {
+            foreach (var neighbor in GetCardinalNeighbors(position)) {
                 if (!Pathfinding.IsInBounds(neighbor)) continue;
                 if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue;
 
                 tempGrassTiles.Add(neighbor);
-                tempFoodTiles.Add(food.Position);
+                tempFoodTiles.Add(position);
             }
         }
 

@@ -10,7 +10,8 @@ public class AnimalBehaviour : Food
     private ThirstUrgeResponder thirstUrgeResponder;
     private HungerUrgeResponder hungerUrgeResponder;
 
-    void Awake() {
+    protected override void Awake() {
+        base.Awake();
         isFemale = Random.Range(0, 2) == 1;
         urgeHandler = GetComponent<UrgeHandler>();
         noneUrgeResponder = GetComponent<NoneUrgeResponder>();
@@ -32,15 +33,16 @@ public class AnimalBehaviour : Food
 
     protected override void Update() {
         base.Update();
+
         switch (urgeHandler.GetHighestUrge()) {
-            case Urge.None:
-                noneUrgeResponder.RespondToUrge();
-                break;
             case Urge.Thirst:
                 thirstUrgeResponder.RespondToUrge();
                 break;
             case Urge.Hunger:
                 hungerUrgeResponder.RespondToUrge();
+                break;
+            default:
+                noneUrgeResponder.RespondToUrge();
                 break;
         }
     }
