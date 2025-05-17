@@ -19,6 +19,6 @@ MonoBehaviour:
   Model: {fileID: 4887084523295724142, guid: d86589cfcfdad974398ae1c452cd85fa, type: 3}
   Name: Mouse
   Speed: 2
-  SenseRange: 4
-  MatingPossibilities: {x: 2, y: 4}
+  SenseRange: 3
+  MatingPossibilities: {x: 1, y: 2}
   UrgencySensitivity: 0.4

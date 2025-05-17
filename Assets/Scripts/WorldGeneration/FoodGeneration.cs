@@ -1,30 +1,56 @@
-using System;
 using System.Collections.Generic;
-using System.Net.WebSockets;
 using UnityEngine;
 
 public class FoodGeneration : MonoBehaviour
 {
     public static FoodGeneration Instance;
-    private HashSet<FoodInstance> food;
-    [SerializeField] private List<Food> foodObjects;
-    [SerializeField] private int spawnAmountPerDay;
 
-    void Awake() {
+    private HashSet<FoodInstance> food;
+
+    [SerializeField] private List<Food> foodObjects;
+    [SerializeField] private int initialSpawnAmount = 10;
+    [SerializeField] private int minimumSpawnAmount = 2;
+    [SerializeField] private int dayInterval = 10;
+    [SerializeField] private float spawnReductionPerDay = 1f;
+
+    private int daysPassed = 0;
+    private float dayTime;
+
+    void Awake()
+    {
         food = new();
-        if(Instance == null) {
+        if (Instance == null)
+        {
             Instance = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
         }
     }
 
-    public void SpawnFood() {
-        for(int i = 0; i < spawnAmountPerDay; i++) {
+    void Update()
+    {
+        dayTime += Time.deltaTime;
+        if (dayTime > dayInterval)
+        {
+            SpawnFood();
+            dayTime = 0;
+        }
+    }
+
+    public void SpawnFood()
+    {
+        int spawnAmount = Mathf.Max(minimumSpawnAmount, Mathf.RoundToInt(initialSpawnAmount - daysPassed * spawnReductionPerDay));
+        daysPassed++;
+
+        for (int i = 0; i < spawnAmount; i++)
+        {
             Vector3 spawnPos = GetWalkableCoord();
-            var randomFood = foodObjects[UnityEngine.Random.Range(0, foodObjects.Count)];
+            var randomFood = foodObjects[Random.Range(0, foodObjects.Count)];
             var gameObj = Instantiate(randomFood.GetPrefab(), spawnPos, Quaternion.identity);
-            var generatedFood = new FoodInstance() {
+            var generatedFood = new FoodInstance()
+            {
                 FoodSO = randomFood,
                 Position = new((int)spawnPos.x, (int)spawnPos.z),
                 Instance = gameObj
@@ -34,24 +60,31 @@ public class FoodGeneration : MonoBehaviour
         }
     }
 
-    private Vector3 GetWalkableCoord() {
+    private Vector3 GetWalkableCoord()
+    {
         Vector2Int valid = Pathfinding.GetRandomWaklkablePosition();
-        return new(valid.x, 0, valid.y);
+        return new Vector3(valid.x, 0, valid.y);
     }
 
-    public HashSet<FoodInstance> GetFoodTiles() {
+    public HashSet<FoodInstance> GetFoodTiles()
+    {
         return food;
     }
 
-    public void RemoveFood(Vector2Int position){
+    public void RemoveFood(Vector2Int position)
+    {
         FoodInstance? toRemove = null;
-        foreach (var f in food) {
-            if (f.Position == position) {
+        foreach (var f in food)
+        {
+            if (f.Position == position)
+            {
                 toRemove = f;
                 break;
             }
         }
-        if (toRemove.HasValue) {
+
+        if (toRemove.HasValue)
+        {
             Destroy(toRemove.Value.Instance);
             food.Remove(toRemove.Value);
             UnwalkableAreaMap.blockedArea.Remove(toRemove.Value.Position);
@@ -59,7 +92,8 @@ public class FoodGeneration : MonoBehaviour
     }
 }
 
-public struct FoodInstance {
+public struct FoodInstance
+{
     public Vector2Int Position;
     public Food FoodSO;
     public GameObject Instance;

@@ -19,6 +19,6 @@ MonoBehaviour:
   Model: {fileID: 8164525682853068147, guid: 46373fbb410d3a3499242ed66c02733a, type: 3}
   Name: Elephant
   Speed: 2
-  SenseRange: 4
-  MatingPossibilities: {x: 2, y: 4}
+  SenseRange: 3
+  MatingPossibilities: {x: 1, y: 2}
   UrgencySensitivity: 0.4

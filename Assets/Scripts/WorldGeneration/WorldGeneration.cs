@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class WorldGeneration : MonoBehaviour
@@ -11,7 +12,7 @@ public class WorldGeneration : MonoBehaviour
     public const float WATER_LEVEL = 0.3f;
     public const int WORLD_SIZE = 60;
     public static WorldGeneration Instance;
-    public HashSet<Vector2Int> WaterTiles {get; private set;}
+    public HashSet<Vector2Int> WaterTiles { get; private set; }
     [SerializeField] private float scale;
     [SerializeField] private bool generateIsland;
     [SerializeField] private int seed;
@@ -21,7 +22,8 @@ public class WorldGeneration : MonoBehaviour
     private FoodGeneration foodGeneration;
     private List<Tile> tiles;
 
-    private void Awake() {
+    private void Awake()
+    {
         tiles = new();
         WaterTiles = new();
         MakeSingleton();
@@ -31,46 +33,57 @@ public class WorldGeneration : MonoBehaviour
         foodGeneration = GetComponent<FoodGeneration>();
     }
 
-    private void MakeSingleton(){
-        if(Instance == null) {
+    private void MakeSingleton()
+    {
+        if (Instance == null)
+        {
             Instance = this;
-        } else {
+        }
+        else
+        {
             Destroy(gameObject);
         }
     }
 
-    void Start() {
+    void Start()
+    {
         GenerateWorld();
         GenerateMesh();
     }
 
-    private void GenerateWorld() {
-        for (int z = 0; z < WORLD_SIZE; z++) {
-            for (int x = 0; x < WORLD_SIZE; x++) {
+    private void GenerateWorld()
+    {
+        for (int z = 0; z < WORLD_SIZE; z++)
+        {
+            for (int x = 0; x < WORLD_SIZE; x++)
+            {
                 float noise = Mathf.PerlinNoise(
                     (x + seed) * scale,
                     (z + seed) * scale
                 );
 
                 float height = noise;
-                if (generateIsland) {
+                if (generateIsland)
+                {
                     float nx = x / (float)WORLD_SIZE - 0.5f;
                     float nz = z / (float)WORLD_SIZE - 0.5f;
 
                     float distance = Mathf.Sqrt(nx * nx + nz * nz) * 2f;
                     distance = Mathf.Clamp01(distance); // Ensure distance stays in [0, 1]
 
-                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 2)); // pondSharpness ∈ [1.5, 4]
+                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 4)); // pondSharpness ∈ [1.5, 4]
                 }
 
 
-                Tile tile = new() {
+                Tile tile = new()
+                {
                     Height = height,
                     Position = new Vector2Int(x, z)
                 };
                 tiles.Add(tile);
 
-                if (height < WATER_LEVEL) {
+                if (height < WATER_LEVEL)
+                {
                     UnwalkableAreaMap.blockedArea.Add(tile.Position);
                     WaterTiles.Add(tile.Position);
                 }
@@ -83,21 +96,23 @@ public class WorldGeneration : MonoBehaviour
         foodGeneration.SpawnFood();
     }
 
-    private void GenerateMesh(){
+    private void GenerateMesh()
+    {
         ChunkMeshBuilder chunkMeshBuilderGrass = new();
         ChunkMeshBuilder chunkMeshBuilderWater = new();
-        foreach (Tile t in tiles) {
+        foreach (Tile t in tiles)
+        {
             var chunkMeshBuilder = t.Height < WATER_LEVEL ? chunkMeshBuilderWater : chunkMeshBuilderGrass;
             float3 offset = new(t.Position.x, 0, t.Position.y);
             chunkMeshBuilder.AddFace(Direction.Up, offset, t.Height);
-            if(t.Position.x == 0) 
+            if (t.Position.x == 0)
                 chunkMeshBuilder.AddFace(Direction.Left, offset, t.Height);
-            if(t.Position.y == 0)
+            if (t.Position.y == 0)
                 chunkMeshBuilder.AddFace(Direction.Back, offset, t.Height);
 
-            if(t.Position.x == WORLD_SIZE-1) 
+            if (t.Position.x == WORLD_SIZE - 1)
                 chunkMeshBuilder.AddFace(Direction.Right, offset, t.Height);
-            if(t.Position.y == WORLD_SIZE-1)
+            if (t.Position.y == WORLD_SIZE - 1)
                 chunkMeshBuilder.AddFace(Direction.Forward, offset, t.Height);
         }
         var grassMesh = chunkMeshBuilderGrass.GetMesh();
@@ -106,7 +121,8 @@ public class WorldGeneration : MonoBehaviour
     }
 
 
-    private void SetChunkMesh(ChunkMesh chunkMesh) {
+    private void SetChunkMesh(ChunkMesh chunkMesh)
+    {
         var mesh = new Mesh();
 
         // Combine vertices

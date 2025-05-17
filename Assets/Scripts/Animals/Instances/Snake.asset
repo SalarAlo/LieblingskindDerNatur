@@ -19,6 +19,6 @@ MonoBehaviour:
   Model: {fileID: 7344188900994559385, guid: 87d83975b3e380d4ebbd737090aad4b8, type: 3}
   Name: Snake
   Speed: 2
-  SenseRange: 4
-  MatingPossibilities: {x: 2, y: 4}
+  SenseRange: 3
+  MatingPossibilities: {x: 1, y: 2}
   UrgencySensitivity: 0.4
