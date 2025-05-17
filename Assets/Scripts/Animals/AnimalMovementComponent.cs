@@ -8,19 +8,20 @@ public class AnimalMovementComponent : MonoBehaviour
     [SerializeField] private float jumpHeight = 1.0f;
     [SerializeField] private float jumpTime = 0.5f; // Constant move+jump time
 
-    private AnimalSO animalSO;
+    private AnimalBehaviour animalBehaviour;
     private Vector3 startPosition;
     private Vector3 endPosition;
     private float elapsedTime;
     private bool isMoving;
     private bool isWaiting;
+    private bool canMove = true;
     private float waitTimeRemaining;
 
     private Quaternion startRotation;
     private Quaternion targetRotation;
 
     void Awake() {
-        animalSO = GetComponent<AnimalBehaviour>().GetAnimalSO();
+        animalBehaviour = GetComponent<AnimalBehaviour>();
         moveDuration += UnityEngine.Random.Range(0, 0.05f) - 0.025f;
     }
 
@@ -31,7 +32,7 @@ public class AnimalMovementComponent : MonoBehaviour
         elapsedTime = 0f;
         isMoving = true;
         isWaiting = false;
-        waitTimeRemaining = (moveDuration / animalSO.Speed) - jumpTime;
+        waitTimeRemaining = (moveDuration / animalBehaviour.Speed) - jumpTime;
         waitTimeRemaining = Mathf.Max(0f, waitTimeRemaining);
 
         // Setup smooth rotation
@@ -50,7 +51,10 @@ public class AnimalMovementComponent : MonoBehaviour
 
     void Update()
     {
-        if (isMoving) {
+        if (!canMove) return;
+        
+        if (isMoving)
+        {
             elapsedTime += Time.deltaTime;
             float t = Mathf.Clamp01(elapsedTime / jumpTime);
 
@@ -83,4 +87,11 @@ public class AnimalMovementComponent : MonoBehaviour
 
     public bool IsDoingMove() =>
         isWaiting || isMoving;
+
+    public void DisableMovement(){
+        canMove = false;
+    }
+    public void EnableMovement(){
+        canMove = true;
+    }
 }

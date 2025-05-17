@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using Unity.VisualScripting;
 using UnityEngine;
 
 public class SurrounderSensor : MonoBehaviour
@@ -13,6 +11,56 @@ public class SurrounderSensor : MonoBehaviour
         behaviour = GetComponent<AnimalBehaviour>();
         animalSO = behaviour.GetAnimalSO();
     }
+
+
+    public bool TrySenseNearestGrassTilesNearMate(
+        out List<Vector2Int> adjacentWalkableTilesNearMates,
+        out List<Vector2Int> matePositions
+    ) {
+        Vector2Int ownPos = transform.position.ToVector2Int();
+        var tempGrassTiles = new List<Vector2Int>();
+        var tempMateTiles = new List<Vector2Int>();
+
+
+        var sensingArea = GetSensingArea();
+
+        var mateLocations = WorldPlacable.GetAnimals(animalSO).Where(a => a.IsFemale() != behaviour.IsFemale()).Select(a => a.Position).ToList();
+
+        foreach (var position in mateLocations) {
+            if (!sensingArea.Contains(position)) continue;
+
+            foreach (var neighbor in GetCardinalNeighbors(position)) {
+                if (!Pathfinding.IsInBounds(neighbor)) continue;
+                if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue;
+
+                tempGrassTiles.Add(neighbor);
+                tempMateTiles.Add(position);
+            }
+        }
+
+        if (tempGrassTiles.Count == 0) {
+            adjacentWalkableTilesNearMates = null;
+            matePositions = null;
+            return false;
+        }
+
+        var combined = new List<(Vector2Int Grass, Vector2Int Food)>();
+        for (int i = 0; i < tempGrassTiles.Count; i++) {
+            combined.Add((tempGrassTiles[i], tempMateTiles[i]));
+        }
+
+        combined.Sort((a, b) =>
+            ((a.Grass - ownPos).sqrMagnitude).CompareTo((b.Grass - ownPos).sqrMagnitude));
+
+        adjacentWalkableTilesNearMates = new();
+        matePositions = new();
+        foreach (var pair in combined) {
+            adjacentWalkableTilesNearMates.Add(pair.Grass);
+            matePositions.Add(pair.Food);
+        }
+        return true;
+    }
+
 
     public bool TrySenseNearestGrassTilesNearFood(
         out List<Vector2Int> grassTiles,
@@ -32,10 +80,12 @@ public class SurrounderSensor : MonoBehaviour
         Debug.Log(preyLocation.Count);
         eatableFoodArea.AddRange(preyLocation);
 
-        foreach (var position in eatableFoodArea) {
+        foreach (var position in eatableFoodArea)
+        {
             if (!sensingArea.Contains(position)) continue;
 
-            foreach (var neighbor in GetCardinalNeighbors(position)) {
+            foreach (var neighbor in GetCardinalNeighbors(position))
+            {
                 if (!Pathfinding.IsInBounds(neighbor)) continue;
                 if (UnwalkableAreaMap.blockedArea.Contains(neighbor)) continue;
 
@@ -44,7 +94,8 @@ public class SurrounderSensor : MonoBehaviour
             }
         }
 
-        if (tempGrassTiles.Count == 0) {
+        if (tempGrassTiles.Count == 0)
+        {
             grassTiles = null;
             correspondingFoodTiles = null;
             return false;
@@ -52,7 +103,8 @@ public class SurrounderSensor : MonoBehaviour
 
         // Create list of pairs and sort
         var combined = new List<(Vector2Int Grass, Vector2Int Food)>();
-        for (int i = 0; i < tempGrassTiles.Count; i++) {
+        for (int i = 0; i < tempGrassTiles.Count; i++)
+        {
             combined.Add((tempGrassTiles[i], tempFoodTiles[i]));
         }
 
@@ -62,7 +114,8 @@ public class SurrounderSensor : MonoBehaviour
         // Output
         grassTiles = new();
         correspondingFoodTiles = new();
-        foreach (var pair in combined) {
+        foreach (var pair in combined)
+        {
             grassTiles.Add(pair.Grass);
             correspondingFoodTiles.Add(pair.Food);
         }

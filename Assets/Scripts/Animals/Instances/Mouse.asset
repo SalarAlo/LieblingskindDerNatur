@@ -18,7 +18,7 @@ MonoBehaviour:
   Prey: {fileID: 11400000, guid: f9d4cbc0c5799024d8b5af7d2faad0dd, type: 2}
   Model: {fileID: 4887084523295724142, guid: d86589cfcfdad974398ae1c452cd85fa, type: 3}
   Name: Mouse
-  Speed: 3.5
-  SenseRange: 6
-  MatingPossibilities: {x: 0, y: 0}
+  Speed: 2
+  SenseRange: 4
+  MatingPossibilities: {x: 2, y: 4}
   UrgencySensitivity: 0.4

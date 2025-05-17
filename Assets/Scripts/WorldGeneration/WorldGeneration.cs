@@ -13,6 +13,8 @@ public class WorldGeneration : MonoBehaviour
     public static WorldGeneration Instance;
     public HashSet<Vector2Int> WaterTiles {get; private set;}
     [SerializeField] private float scale;
+    [SerializeField] private bool generateIsland;
+    [SerializeField] private int seed;
     [SerializeField] private MeshFilter worldRenderer;
     private ObstacleGeneration obstacleGeneration;
     private AnimalGeneration animalGeneration;
@@ -45,15 +47,22 @@ public class WorldGeneration : MonoBehaviour
     private void GenerateWorld() {
         for (int z = 0; z < WORLD_SIZE; z++) {
             for (int x = 0; x < WORLD_SIZE; x++) {
-                float nx = x / (float)WORLD_SIZE - 0.5f;
-                float nz = z / (float)WORLD_SIZE - 0.5f;
+                float noise = Mathf.PerlinNoise(
+                    (x + seed) * scale,
+                    (z + seed) * scale
+                );
 
-                float distance = Mathf.Sqrt(nx * nx + nz * nz) * 2f;
-                distance = Mathf.Clamp01(distance); // Ensure distance stays in [0, 1]
+                float height = noise;
+                if (generateIsland) {
+                    float nx = x / (float)WORLD_SIZE - 0.5f;
+                    float nz = z / (float)WORLD_SIZE - 0.5f;
 
-                float noise = Mathf.PerlinNoise(x * scale, z * scale);
+                    float distance = Mathf.Sqrt(nx * nx + nz * nz) * 2f;
+                    distance = Mathf.Clamp01(distance); // Ensure distance stays in [0, 1]
 
-                float height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 2)); // pondSharpness ∈ [1.5, 4]
+                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 2)); // pondSharpness ∈ [1.5, 4]
+                }
+
 
                 Tile tile = new() {
                     Height = height,

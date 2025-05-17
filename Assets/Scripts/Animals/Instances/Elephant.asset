@@ -18,7 +18,7 @@ MonoBehaviour:
   Prey: {fileID: 11400000, guid: 8f4baf5f10e884245817d2eee18265f9, type: 2}
   Model: {fileID: 8164525682853068147, guid: 46373fbb410d3a3499242ed66c02733a, type: 3}
   Name: Elephant
-  Speed: 1
-  SenseRange: 6
-  MatingPossibilities: {x: 0, y: 0}
-  UrgencySensitivity: 0.3
+  Speed: 2
+  SenseRange: 4
+  MatingPossibilities: {x: 2, y: 4}
+  UrgencySensitivity: 0.4

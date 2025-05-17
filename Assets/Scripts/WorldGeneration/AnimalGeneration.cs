@@ -13,7 +13,8 @@ public class AnimalGeneration : MonoBehaviour
                 do {
                     spawnPos = new(Random.Range(0, WorldGeneration.WORLD_SIZE), 0, Random.Range(0, WorldGeneration.WORLD_SIZE));
                 } while(UnwalkableAreaMap.blockedArea.Contains(new Vector2Int(spawnPos.x, spawnPos.z)));
-                Instantiate(animalSpawn.animal.Model, spawnPos, Quaternion.identity);
+                var animal = Instantiate(animalSpawn.animal.Model, spawnPos, Quaternion.identity);
+                animal.GetComponent<AnimalBehaviour>().SetGenes();
             }
         }
     }
