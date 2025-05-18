@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.VisualScripting;
@@ -5,11 +6,14 @@ using UnityEngine;
 
 public class WorldPlacable : MonoBehaviour
 {
+    public static Action<WorldPlacable> OnAnyWorldPlacableSpawned;
+    public static Action<WorldPlacable> OnAnyWorldPlacableRemoved;
     public Vector2Int Position {get; private set;}
     private static readonly List<WorldPlacable> worldPlacables = new();
 
     protected virtual void Awake() {
         worldPlacables.Add(this);
+        OnAnyWorldPlacableSpawned?.Invoke(this);
     }
 
     protected virtual void Update() {
@@ -22,6 +26,7 @@ public class WorldPlacable : MonoBehaviour
 
     void OnDestroy() {
         worldPlacables.Remove(this);
+        OnAnyWorldPlacableRemoved?.Invoke(this);
     }
 
     public static List<AnimalBehaviour> GetAnimals(AnimalSO so) {

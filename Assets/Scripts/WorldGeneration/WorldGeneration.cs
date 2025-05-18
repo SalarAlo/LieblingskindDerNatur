@@ -1,9 +1,6 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 
@@ -27,6 +24,7 @@ public class WorldGeneration : MonoBehaviour
         tiles = new();
         WaterTiles = new();
         MakeSingleton();
+        seed = UnityEngine.Random.Range(0, 100000);
 
         obstacleGeneration = GetComponent<ObstacleGeneration>();
         animalGeneration = GetComponent<AnimalGeneration>();
@@ -71,7 +69,7 @@ public class WorldGeneration : MonoBehaviour
                     float distance = Mathf.Sqrt(nx * nx + nz * nz) * 2f;
                     distance = Mathf.Clamp01(distance); // Ensure distance stays in [0, 1]
 
-                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 4)); // pondSharpness ∈ [1.5, 4]
+                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 2.5f)); // pondSharpness ∈ [1.5, 4]
                 }
 
 

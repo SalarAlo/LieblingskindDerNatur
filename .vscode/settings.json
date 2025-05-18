@@ -59,5 +59,6 @@
     "dotnet.defaultSolution": "CVCampProjekt.sln",
     "editor.acceptSuggestionOnEnter": "on",
     "editor.inlineSuggest.enabled": false,
-    "editor.inlineSuggest.edits.allowCodeShifting": "never"
+    "editor.inlineSuggest.edits.allowCodeShifting": "never",
+    "python.analysis.autoFormatStrings": true
 }

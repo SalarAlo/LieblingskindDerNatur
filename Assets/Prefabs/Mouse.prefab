@@ -515,6 +515,7 @@ GameObject:
   - component: {fileID: -4544276488840632195}
   - component: {fileID: 8145184759762623582}
   - component: {fileID: -2784883447398115022}
+  - component: {fileID: 7773929697483909763}
   m_Layer: 0
   m_Name: Mouse
   m_TagString: Untagged
@@ -674,6 +675,20 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   path: []
+--- !u!114 &7773929697483909763
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4887084523295724142}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7416d2561dbc9034182c827e90644a7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bloodSplatPrefab: {fileID: 3016875759028613520, guid: af4e2266258b16b4cbb3979032fff108, type: 3}
+  love: {fileID: 1946034185455737781}
 --- !u!1 &6771647652991262551
 GameObject:
   m_ObjectHideFlags: 0
@@ -1091,6 +1106,11 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9f47439097a05124694020906776bb33, type: 3}
+--- !u!198 &1946034185455737781 stripped
+ParticleSystem:
+  m_CorrespondingSourceObject: {fileID: 965585967688297286, guid: 9f47439097a05124694020906776bb33, type: 3}
+  m_PrefabInstance: {fileID: 1614470740385640691}
+  m_PrefabAsset: {fileID: 0}
 --- !u!4 &7608319765817274531 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 9219411671534895184, guid: 9f47439097a05124694020906776bb33, type: 3}

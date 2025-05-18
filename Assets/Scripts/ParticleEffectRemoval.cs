@@ -7,7 +7,7 @@ public class ParticleEffectRemoval : MonoBehaviour
     void Awake() {
         ps = GetComponent<ParticleSystem>();
         var main = ps.main;
-        var lifetime = main.startLifetime.constantMax;
+        var lifetime = main.duration;
         Destroy(gameObject, lifetime);
     }
 }

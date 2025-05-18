@@ -17,36 +17,48 @@ public class ReproductionUrgeResponder : UrgeResponder
     private int mutationStrengthSenseRange = 1;
     private AnimalBehaviour targetMate;
     private AnimalBehaviour behaviour;
+    private AnimalEffects animalEffects;
 
-    protected override void Awake() {
+    protected override void Awake()
+    {
         base.Awake();
         movementComponent = GetComponent<AnimalMovementComponent>();
         surrounderSensor = GetComponent<SurrounderSensor>();
+        animalEffects = GetComponent<AnimalEffects>();
         behaviour = GetComponent<AnimalBehaviour>();
     }
 
-    public override void RespondToUrge() {
+    public override void RespondToUrge()
+    {
         if (HandleWaitForPreviousWalk())
             return;
 
-        if (!foundMate) {
-            if (!TryFindPathToMate()) {
+        if (!foundMate)
+        {
+            if (!TryFindPathToMate())
+            {
                 Debug.Log("[ReproductionUrgeResponder] No mate found, going to random destination.");
                 GoToRandomDestination();
             }
-        } else {
+        }
+        else
+        {
             Debug.Log("[ReproductionUrgeResponder] Mate found, moving toward mate.");
             MoveTowardMate();
         }
     }
 
-    public override Urge GetUrge() {
+    public override Urge GetUrge()
+    {
         return Urge.Reproduction;
     }
 
-    private bool HandleWaitForPreviousWalk() {
-        if (!hasWaitedForPreviousWalkBeforeStarting && movementComponent.IsDoingMove()) {
-            if (!hasStartedWaitingForPreviousWalk) {
+    private bool HandleWaitForPreviousWalk()
+    {
+        if (!hasWaitedForPreviousWalkBeforeStarting && movementComponent.IsDoingMove())
+        {
+            if (!hasStartedWaitingForPreviousWalk)
+            {
                 movementComponent.OnMoveDone += MovementComponent_OnMoveDone;
                 hasStartedWaitingForPreviousWalk = true;
             }
@@ -55,27 +67,37 @@ public class ReproductionUrgeResponder : UrgeResponder
         return false;
     }
 
-    private bool TryFindPathToMate() {
-        if (movementComponent.IsDoingMove()) {
+    private bool TryFindPathToMate()
+    {
+        if (movementComponent.IsDoingMove())
+        {
             return true;
         }
 
-        if (CheckForMate(out List<Vector2Int> possibleDestinations, out List<Vector2Int> foodPos)) {
+        if (CheckForMate(out List<Vector2Int> possibleDestinations, out List<Vector2Int> foodPos))
+        {
             Debug.Log("[ReproductionUrgeResponder] calculating mate");
 
             var position = transform.position.ToVector2Int();
 
-            for (int i = 0; i < possibleDestinations.Count; i++) {
+            for (int i = 0; i < possibleDestinations.Count; i++)
+            {
                 path = Pathfinding.FindPath(position, possibleDestinations[i]);
-                if (path != null) {
+                if (path != null)
+                {
                     destination = foodPos[i];
                     targetMate = WorldPlacable.GetWorldPlacableAt(destination) as AnimalBehaviour;
-                    if (targetMate != null) {
+                    if (targetMate != null)
+                    {
                         targetMate.GetComponent<AnimalMovementComponent>().DisableMovement();
+                        targetMate.GetComponent<AnimalEffects>().EnableLoveEffect();
+                        animalEffects.EnableLoveEffect();
                         foundMate = true;
                         Debug.Log("[ReproductionUrgeResponder] Found mate at: " + destination);
                         return true;
-                    } else {
+                    }
+                    else
+                    {
                     }
                 }
             }
@@ -83,32 +105,45 @@ public class ReproductionUrgeResponder : UrgeResponder
         return false;
     }
 
-    private void MoveTowardMate() {
-        if (movementComponent.IsDoingMove()) {
+    private void MoveTowardMate()
+    {
+        if (movementComponent.IsDoingMove())
+        {
             return;
         }
 
-        if (targetMate == null) {
+        if (targetMate == null)
+        {
             Debug.LogWarning("[ReproductionUrgeResponder] targetMate is died, resetting foundMate.");
             foundMate = false;
+            animalEffects.DisableLoveEffect();
             return;
         }
 
         var position = transform.position.ToVector2Int();
-        if(!TryGetNearestGrassTileTo(targetMate.Position, out Vector2Int nearestGrassTile)) {
+        if (!TryGetNearestGrassTileTo(targetMate.Position, out Vector2Int nearestGrassTile))
+        {
             Debug.LogWarning("[ReproductionUrgeResponder] No grass tile near mate.");
             foundMate = false;
+            targetMate = null;
+            targetMate.GetComponent<AnimalEffects>().DisableLoveEffect();
+            animalEffects.DisableLoveEffect();
             return;
         }
         path = Pathfinding.FindPath(position, nearestGrassTile);
 
-        if (path == null) {
+        if (path == null)
+        {
             Debug.LogWarning("[ReproductionUrgeResponder] No path to nearest grass tile.");
             foundMate = false;
+            targetMate = null;
+            targetMate.GetComponent<AnimalEffects>().DisableLoveEffect();
+            animalEffects.DisableLoveEffect();
             return;
         }
 
-        if (path.Count == 0) {
+        if (path.Count == 0)
+        {
             Debug.Log("[ReproductionUrgeResponder] Arrived at mate, finishing urge.");
             FinishUrge();
             return;
@@ -119,7 +154,8 @@ public class ReproductionUrgeResponder : UrgeResponder
         path.RemoveAt(0);
     }
 
-    private bool TryGetNearestGrassTileTo(Vector2Int position, out Vector2Int nearestGrass) {
+    private bool TryGetNearestGrassTileTo(Vector2Int position, out Vector2Int nearestGrass)
+    {
         nearestGrass = default;
         Vector2Int ownPosition = transform.position.ToVector2Int();
         List<Vector2Int> grassTiles = GetCardinalNeighbors(position);
@@ -127,7 +163,8 @@ public class ReproductionUrgeResponder : UrgeResponder
             .Where(tile => Pathfinding.IsInBounds(tile) && !UnwalkableAreaMap.blockedArea.Contains(tile))
             .OrderBy(validTile => (validTile - ownPosition).sqrMagnitude)
             .ToList();
-        if(grassTiles.Count == 0) {
+        if (grassTiles.Count == 0)
+        {
             Debug.LogWarning("[ReproductionUrgeResponder] No valid grass tiles found near position: ");
             return false;
         }
@@ -135,17 +172,20 @@ public class ReproductionUrgeResponder : UrgeResponder
         return true;
     }
 
-    private void MovementComponent_OnMoveDone() {
+    private void MovementComponent_OnMoveDone()
+    {
         hasWaitedForPreviousWalkBeforeStarting = true;
         movementComponent.OnMoveDone -= MovementComponent_OnMoveDone;
     }
 
-    private void GoToRandomDestination() {
+    private void GoToRandomDestination()
+    {
         Vector2Int destination;
         Vector2Int position = transform.position.ToVector2Int();
 
         int tries = 0;
-        do {
+        do
+        {
             destination = position + GetRandomDir();
             tries++;
         } while (!Pathfinding.IsInBounds(destination) || UnwalkableAreaMap.blockedArea.Contains(destination));
@@ -153,20 +193,24 @@ public class ReproductionUrgeResponder : UrgeResponder
         movementComponent.MoveTo(new(destination.x, 0, destination.y));
     }
 
-    private Vector2Int GetRandomDir() {
+    private Vector2Int GetRandomDir()
+    {
         Vector2Int dir;
-        do {
+        do
+        {
             dir = new(UnityEngine.Random.Range(-1, 2), UnityEngine.Random.Range(-1, 2));
         } while (dir == Vector2Int.zero);
         return dir;
     }
 
-    private bool CheckForMate(out List<Vector2Int> grassTileFoodPos, out List<Vector2Int> foodPos) {
+    private bool CheckForMate(out List<Vector2Int> grassTileFoodPos, out List<Vector2Int> foodPos)
+    {
         bool result = surrounderSensor.TrySenseNearestGrassTilesNearMate(out grassTileFoodPos, out foodPos);
         return result;
     }
 
-    private List<Vector2Int> GetCardinalNeighbors(Vector2Int pos) {
+    private List<Vector2Int> GetCardinalNeighbors(Vector2Int pos)
+    {
         return new() {
             new(pos.x + 1, pos.y),
             new(pos.x - 1, pos.y),
@@ -175,17 +219,19 @@ public class ReproductionUrgeResponder : UrgeResponder
         };
     }
 
-    protected override void FinishUrge() {
+    protected override void FinishUrge()
+    {
         base.FinishUrge();
         Debug.Log("[ReproductionUrgeResponder] FinishUrge called. Spawning offspring.");
-        if (targetMate != null) {
-            if (targetMate.TryGetComponent<AnimalMovementComponent>(out var moveComp))
-                moveComp.EnableMovement();
-        }
+        if (targetMate.TryGetComponent<AnimalMovementComponent>(out var moveComp))
+            moveComp.EnableMovement();
+        targetMate.GetComponent<AnimalEffects>().DisableLoveEffect();
+        animalEffects.DisableLoveEffect();
 
         var matingPossibilities = behaviour.GetAnimalSO().MatingPossibilities;
         int childCount = UnityEngine.Random.Range(matingPossibilities.x, matingPossibilities.y);
-        for (int i = 0; i < childCount; i++) {
+        for (int i = 0; i < childCount; i++)
+        {
             float childBaseSpeed = (targetMate.Speed + behaviour.Speed) / 2;
             int childBaseSenseRange = Mathf.RoundToInt((targetMate.SenseRange + behaviour.SenseRange) / 2.0f);
             var child = Instantiate(behaviour.GetAnimalSO().Model, behaviour.Position.ToVector3(), Quaternion.identity);
@@ -200,5 +246,11 @@ public class ReproductionUrgeResponder : UrgeResponder
         foundMate = false;
         hasWaitedForPreviousWalkBeforeStarting = false;
         hasStartedWaitingForPreviousWalk = false;
+    }
+
+    void OnDestroy() {
+        if (targetMate == null) return;
+        targetMate.GetComponent<AnimalEffects>().DisableLoveEffect();
+        animalEffects.DisableLoveEffect();
     }
 }
