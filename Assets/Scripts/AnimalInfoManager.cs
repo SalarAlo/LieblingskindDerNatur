@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class AnimalInfoManager : MonoBehaviour
 {
+    public static AnimalInfoManager Instance;
+    public Action OnAnimalAmountChanged;
     [SerializeField] private AnimalSO mouseSO;
     [SerializeField] private AnimalSO elephantSO;
     [SerializeField] private AnimalSO snakeSO;
@@ -15,6 +17,11 @@ public class AnimalInfoManager : MonoBehaviour
 
     void Awake()
     {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+
         WorldPlacable.OnAnyWorldPlacableRemoved += WorldPlacable_OnAnyWorldPlacableRemoved;
         WorldPlacable.OnAnyWorldPlacableSpawned += WorldPlacable_OnAnyWorldPlacableSpawned;
     }
@@ -34,6 +41,7 @@ public class AnimalInfoManager : MonoBehaviour
             elephantAmount++;
             elephantInfo.SetTextAmount(elephantAmount);
         }
+        OnAnimalAmountChanged?.Invoke();
     }
 
     private void WorldPlacable_OnAnyWorldPlacableRemoved(WorldPlacable placable)
@@ -51,6 +59,19 @@ public class AnimalInfoManager : MonoBehaviour
         else {
             elephantAmount--;
             elephantInfo.SetTextAmount(elephantAmount);
+        }
+        OnAnimalAmountChanged?.Invoke();
+    }
+    public int GetAmountOfAnimal(AnimalSO animalSO) {
+        string animalName = animalSO.Name;
+        if (animalName == snakeSO.Name) {
+            return snakeAmount;
+        }
+        else if (animalName == mouseSO.Name) {
+            return mouseAmount;
+        }
+        else {
+            return elephantAmount;
         }
     }
 }

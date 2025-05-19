@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.TextCore;
 
 [RequireComponent(typeof(Camera))]
 public class FreeFlyCamera : MonoBehaviour
@@ -83,6 +84,8 @@ public class FreeFlyCamera : MonoBehaviour
     private Vector3 _initPosition;
     private Vector3 _initRotation;
 
+    public static  FreeFlyCamera Instance { get; private set; }
+
 #if UNITY_EDITOR
     private void OnValidate()
     {
@@ -90,6 +93,23 @@ public class FreeFlyCamera : MonoBehaviour
             _boostedSpeed = _movementSpeed;
     }
 #endif
+
+    void Awake() {
+        if (Instance == null) Instance = this;
+        else Destroy(gameObject);
+    }
+
+    public void Disable() {
+        _active = false;
+        Cursor.lockState = CursorLockMode.None;
+        Cursor.visible = true;
+    }
+
+    public void Enable() {
+        _active = true;
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
 
 
     private void Start()
@@ -100,8 +120,7 @@ public class FreeFlyCamera : MonoBehaviour
 
     private void OnEnable()
     {
-        if (_active)
-            _wantedMode = CursorLockMode.Locked;
+        if (_active) _wantedMode = CursorLockMode.Locked;
     }
 
     // Apply requested cursor state
@@ -137,10 +156,8 @@ public class FreeFlyCamera : MonoBehaviour
         _currentIncrease = Time.deltaTime + Mathf.Pow(_currentIncreaseMem, 3) * Time.deltaTime;
     }
 
-    private void Update()
-    {
-        if (!_active)
-            return;
+    private void Update() {
+        if (!_active) return;
 
         SetCursorState();
 

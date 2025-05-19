@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Unity.Entities.UniversalDelegates;
 using Unity.Mathematics;
 using UnityEngine;
 
@@ -54,7 +55,12 @@ public class ThirstUrgeResponder : UrgeResponder
         } else {
             if(movementComponent.IsDoingMove()) return;
 
-            if(path.Count == 0)  {
+            if (path == null) {
+                foundWater = false;
+            }
+
+            if (path.Count == 0)
+            {
                 FinishUrge();
                 return;
             }

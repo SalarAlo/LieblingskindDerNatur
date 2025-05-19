@@ -6,6 +6,7 @@ using UnityEngine;
 public class AnimalSO : ScriptableObject
 {
     public List<Food> EatableFood;
+    public Sprite Sprite;
     public AnimalSO Prey;
     public GameObject Model;
     public string Name;

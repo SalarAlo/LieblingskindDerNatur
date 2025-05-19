@@ -13,8 +13,8 @@ public class ReproductionUrgeResponder : UrgeResponder
     private SurrounderSensor surrounderSensor;
     private Vector2Int destination;
     [SerializeField] private List<Vector2Int> path;
-    private float mutationStrengthSpeed = .1f;
-    private int mutationStrengthSenseRange = 1;
+    private float mutationStrengthSpeed = 1f;
+    private int mutationStrengthSenseRange = 2;
     private AnimalBehaviour targetMate;
     private AnimalBehaviour behaviour;
     private AnimalEffects animalEffects;
@@ -125,8 +125,8 @@ public class ReproductionUrgeResponder : UrgeResponder
         {
             Debug.LogWarning("[ReproductionUrgeResponder] No grass tile near mate.");
             foundMate = false;
-            targetMate = null;
             targetMate.GetComponent<AnimalEffects>().DisableLoveEffect();
+            targetMate = null;
             animalEffects.DisableLoveEffect();
             return;
         }

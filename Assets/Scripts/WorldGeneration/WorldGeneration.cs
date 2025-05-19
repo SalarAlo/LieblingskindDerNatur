@@ -24,7 +24,7 @@ public class WorldGeneration : MonoBehaviour
         tiles = new();
         WaterTiles = new();
         MakeSingleton();
-        seed = UnityEngine.Random.Range(0, 100000);
+        seed = UnityEngine.Random.Range(0, 1_000_000);
 
         obstacleGeneration = GetComponent<ObstacleGeneration>();
         animalGeneration = GetComponent<AnimalGeneration>();
@@ -45,6 +45,10 @@ public class WorldGeneration : MonoBehaviour
 
     void Start()
     {
+        Generate();
+    }
+
+    private void Generate() {
         GenerateWorld();
         GenerateMesh();
     }
@@ -119,8 +123,7 @@ public class WorldGeneration : MonoBehaviour
     }
 
 
-    private void SetChunkMesh(ChunkMesh chunkMesh)
-    {
+    private void SetChunkMesh(ChunkMesh chunkMesh) {
         var mesh = new Mesh();
 
         // Combine vertices
