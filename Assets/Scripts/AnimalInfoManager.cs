@@ -14,9 +14,11 @@ public class AnimalInfoManager : MonoBehaviour
     private int mouseAmount;
     private int snakeAmount;
     private int elephantAmount;
+    private bool evolutionIncActive;
+    public int EvolutionPoints { get; private set;}
 
-    void Awake()
-    {
+    void Awake() {
+        EvolutionPoints = 10;
         if (Instance == null)
             Instance = this;
         else
@@ -24,6 +26,8 @@ public class AnimalInfoManager : MonoBehaviour
 
         WorldPlacable.OnAnyWorldPlacableRemoved += WorldPlacable_OnAnyWorldPlacableRemoved;
         WorldPlacable.OnAnyWorldPlacableSpawned += WorldPlacable_OnAnyWorldPlacableSpawned;
+
+        PlayerAnimalAssignment.Instance.OnAnimalAssigned += () => evolutionIncActive = true;
     }
 
     private void WorldPlacable_OnAnyWorldPlacableSpawned(WorldPlacable placable) {
@@ -41,11 +45,13 @@ public class AnimalInfoManager : MonoBehaviour
             elephantAmount++;
             elephantInfo.SetTextAmount(elephantAmount);
         }
+        if (evolutionIncActive && PlayerAnimalAssignment.Instance.AnimalSO.Name == animalName) {
+            EvolutionPoints++;
+        }
         OnAnimalAmountChanged?.Invoke();
     }
 
-    private void WorldPlacable_OnAnyWorldPlacableRemoved(WorldPlacable placable)
-    {
+    private void WorldPlacable_OnAnyWorldPlacableRemoved(WorldPlacable placable) {
         if (placable is not AnimalBehaviour animalBehaviour) return;
         string animalName = animalBehaviour.GetAnimalSO().Name;
         if (animalName == snakeSO.Name) {
