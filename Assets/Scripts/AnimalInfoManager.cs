@@ -80,4 +80,9 @@ public class AnimalInfoManager : MonoBehaviour
             return elephantAmount;
         }
     }
+
+    public void DecreaseEvolutionPointsBy(int v) {
+        EvolutionPoints -= v;
+        OnAnimalAmountChanged?.Invoke();
+    }
 }

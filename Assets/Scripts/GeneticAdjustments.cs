@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class GeneticAdjustments : MonoBehaviour
 {
+    public static GeneticAdjustments Instance;
+    
     [SerializeField] private AnimalSO mouseSO;
     [SerializeField] private AnimalSO elephantSO;
     [SerializeField] private AnimalSO snakeSO;
@@ -13,6 +15,13 @@ public class GeneticAdjustments : MonoBehaviour
     private int mouseSenseAdjust;
     private int elephantSenseAdjust;
     private int snakeSenseAdjust;
+
+    void Awake() {
+        if (Instance == null)
+            Instance = this;
+        else
+            Destroy(gameObject);
+    }
 
     public void IncreaseSpeed(AnimalSO animal)
     {

@@ -76,7 +76,7 @@ public class SurrounderSensor : MonoBehaviour
         var foodArea = FoodGeneration.Instance.GetFoodTiles();
 
         var eatableFoodArea = foodArea.Where(food => animalSO.EatableFood.Contains(food.FoodSO)).Select(x => x.Position).ToList();
-        var preyLocation = WorldPlacable.GetAnimals(animalSO.Prey).Select(a => a.Position).ToList();
+        var preyLocation = WorldPlacable.GetAnimals(animalSO.Target).Select(a => a.Position).ToList();
         eatableFoodArea.AddRange(preyLocation);
 
         foreach (var position in eatableFoodArea)

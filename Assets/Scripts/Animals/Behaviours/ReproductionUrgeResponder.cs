@@ -230,15 +230,15 @@ public class ReproductionUrgeResponder : UrgeResponder
 
         var matingPossibilities = behaviour.GetAnimalSO().MatingPossibilities;
         int childCount = UnityEngine.Random.Range(matingPossibilities.x, matingPossibilities.y);
-        for (int i = 0; i < childCount; i++)
-        {
+        for (int i = 0; i < childCount; i++) {
             float childBaseSpeed = (targetMate.Speed + behaviour.Speed) / 2;
             int childBaseSenseRange = Mathf.RoundToInt((targetMate.SenseRange + behaviour.SenseRange) / 2.0f);
             var child = Instantiate(behaviour.GetAnimalSO().Model, behaviour.Position.ToVector3(), Quaternion.identity);
 
             var childBehaviour = child.GetComponent<AnimalBehaviour>();
-            var childSpeed = childBaseSpeed + UnityEngine.Random.Range(-mutationStrengthSpeed, mutationStrengthSpeed);
-            var childSenseRange = childBaseSenseRange + UnityEngine.Random.Range(-mutationStrengthSenseRange, mutationStrengthSenseRange + 1);
+            var childSpeed = childBaseSpeed + UnityEngine.Random.Range(-mutationStrengthSpeed, mutationStrengthSpeed + GeneticAdjustments.Instance.GetSpeedAdjust(behaviour.GetAnimalSO()));
+            
+            var childSenseRange = childBaseSenseRange + UnityEngine.Random.Range(-mutationStrengthSenseRange, mutationStrengthSenseRange + GeneticAdjustments.Instance.GetSenseAdjust(behaviour.GetAnimalSO()) + 1);
             childBehaviour.SetGenes(childSpeed, childSenseRange);
         }
 
