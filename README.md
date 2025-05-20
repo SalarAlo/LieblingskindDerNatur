@@ -6,6 +6,15 @@
 
 ---
 
+## 🛜 Installations-Guide
+
+1. Lade den Build Ordner herunter [`Builds`](Builds).
+2. Extrahiere die ZIP-Datei.
+3. Im extrahierten Ordner findest du eine ausführbare Datei namens "LieblingskindDerNatur.exe".
+4. Starte diese Datei, um das Spiel zu starten und den Spaß zu beginnen.
+   
+---
+
 ## 🎮 Spielprinzip
 
 - 🐘 **Elefanten** zertreten Schlangen  
