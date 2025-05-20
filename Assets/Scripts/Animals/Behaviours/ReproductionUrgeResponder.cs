@@ -238,7 +238,7 @@ public class ReproductionUrgeResponder : UrgeResponder
             var childBehaviour = child.GetComponent<AnimalBehaviour>();
             var childSpeed = childBaseSpeed + UnityEngine.Random.Range(-mutationStrengthSpeed, mutationStrengthSpeed + GeneticAdjustments.Instance.GetSpeedAdjust(behaviour.GetAnimalSO()));
             
-            var childSenseRange = childBaseSenseRange + UnityEngine.Random.Range(-mutationStrengthSenseRange, mutationStrengthSenseRange + GeneticAdjustments.Instance.GetSenseAdjust(behaviour.GetAnimalSO()) + 1);
+            var childSenseRange = childBaseSenseRange + UnityEngine.Random.Range(-mutationStrengthSenseRange, mutationStrengthSenseRange + GeneticAdjustments.Instance.GetSenseAdjust(behaviour.GetAnimalSO()) * mutationStrengthSenseRange + 1);
             childBehaviour.SetGenes(childSpeed, childSenseRange);
         }
 

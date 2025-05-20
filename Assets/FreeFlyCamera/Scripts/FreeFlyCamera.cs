@@ -206,18 +206,22 @@ public class FreeFlyCamera : MonoBehaviour
         // Rotation
         if (_enableRotation)
         {
-            // Pitch
-            transform.rotation *= Quaternion.AngleAxis(
-                -Input.GetAxis("Mouse Y") * _mouseSense,
-                Vector3.right
-            );
+            // Get current euler angles
+            Vector3 euler = transform.eulerAngles;
 
-            // Paw
-            transform.rotation = Quaternion.Euler(
-                transform.eulerAngles.x,
-                transform.eulerAngles.y + Input.GetAxis("Mouse X") * _mouseSense,
-                transform.eulerAngles.z
-            );
+            // Convert to -180..180 range for correct clamping
+            float pitch = euler.x;
+            if (pitch > 180f)    pitch -= 360f;
+
+            // Apply mouse input
+            pitch -= Input.GetAxis("Mouse Y") * _mouseSense;
+            float yaw = euler.y + Input.GetAxis("Mouse X") * _mouseSense;
+
+            // Clamp pitch to [-90, 90]
+            pitch = Mathf.Clamp(pitch, -90f, 90f);
+
+            // Apply rotation
+            transform.rotation = Quaternion.Euler(pitch, yaw, 0f);
         }
 
         // Return to init position

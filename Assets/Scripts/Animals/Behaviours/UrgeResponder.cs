@@ -1,5 +1,4 @@
 using Unity.IO.LowLevel.Unsafe;
-using UnityEditor.ShaderGraph.Drawing.Inspector.PropertyDrawers;
 using UnityEngine;
 
 [RequireComponent(typeof(UrgeHandler))]

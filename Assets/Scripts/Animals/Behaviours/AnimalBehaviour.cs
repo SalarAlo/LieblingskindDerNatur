@@ -44,7 +44,8 @@ public class AnimalBehaviour : Food
     {
         base.Update();
 
-        switch (urgeHandler.GetHighestUrge()) {
+        switch (urgeHandler.GetHighestUrge())
+        {
             case Urge.Thirst:
                 thirstUrgeResponder.RespondToUrge();
                 break;
@@ -60,13 +61,24 @@ public class AnimalBehaviour : Food
         }
     }
 
-    public void SetGenes() {
+    public void SetGenes()
+    {
         Speed = animal.Speed;
         SenseRange = animal.SenseRange;
+        SetBoundaries();
     }
 
-    public void SetGenes(float speed, int senseRange) {
+    public void SetGenes(float speed, int senseRange)
+    {
         Speed = speed;
         SenseRange = senseRange;
+        SetBoundaries();
+    }
+
+    private void SetBoundaries() {
+        if (Speed < 0)
+            Speed = 0.1f;
+        if (SenseRange < 0)
+            SenseRange = 1;
     }
 }

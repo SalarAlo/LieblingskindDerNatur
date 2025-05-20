@@ -19,7 +19,7 @@ MonoBehaviour:
   Target: {fileID: 11400000, guid: 7c4efb8a6ac6d9f41818d6ec4cfa4b2f, type: 2}
   Prey: {fileID: 11400000, guid: f9d4cbc0c5799024d8b5af7d2faad0dd, type: 2}
   Model: {fileID: 7344188900994559385, guid: 87d83975b3e380d4ebbd737090aad4b8, type: 3}
-  Name: Snake
+  Name: Schlange
   Speed: 2
   SenseRange: 3
   MatingPossibilities: {x: 1, y: 2}

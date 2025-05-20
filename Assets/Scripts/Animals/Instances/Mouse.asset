@@ -19,7 +19,7 @@ MonoBehaviour:
   Target: {fileID: 11400000, guid: f9d4cbc0c5799024d8b5af7d2faad0dd, type: 2}
   Prey: {fileID: 11400000, guid: 8f4baf5f10e884245817d2eee18265f9, type: 2}
   Model: {fileID: 4887084523295724142, guid: d86589cfcfdad974398ae1c452cd85fa, type: 3}
-  Name: Mouse
+  Name: Maus
   Speed: 2
   SenseRange: 3
   MatingPossibilities: {x: 1, y: 2}
