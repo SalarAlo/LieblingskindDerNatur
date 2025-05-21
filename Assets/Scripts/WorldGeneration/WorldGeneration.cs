@@ -73,7 +73,7 @@ public class WorldGeneration : MonoBehaviour
                     float distance = Mathf.Sqrt(nx * nx + nz * nz) * 2f;
                     distance = Mathf.Clamp01(distance); // Ensure distance stays in [0, 1]
 
-                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 2.5f)); // pondSharpness ∈ [1.5, 4]
+                    height = Mathf.Lerp(noise, 0.0f, Mathf.Pow(distance, 3f)); // pondSharpness ∈ [1.5, 4]
                 }
 
 

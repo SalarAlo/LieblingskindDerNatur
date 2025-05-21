@@ -10,10 +10,10 @@ public class DebugManager : MonoBehaviour
     {
         if(Input.GetKeyDown(KeyCode.LeftArrow)) {
             Time.timeScale = Math.Max(1, Time.timeScale-1);
-            speedTest.text = "Simulations Geschwindgkeit: " + Time.timeScale;
+            speedTest.text = "Simulations Geschwindigkeit: " + Time.timeScale;
         } else if(Input.GetKeyDown(KeyCode.RightArrow)) {
             Time.timeScale = Math.Min(Time.timeScale+1, 10);
-            speedTest.text = "Simulationsgeschwindgkeit: " + Time.timeScale;
+            speedTest.text = "Simulations Geschwindigkeit: " + Time.timeScale;
         }
     }
 }

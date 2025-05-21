@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class BloodSplashInOrder : MonoBehaviour
@@ -8,8 +9,9 @@ public class BloodSplashInOrder : MonoBehaviour
 
     void Update() {
         if (!Input.GetKeyDown(KeyCode.V)) return;
-        Instantiate(bloodSplash, thingsToDestroy[0].transform.position, Quaternion.identity);
-        Destroy(thingsToDestroy[0]);
-        thingsToDestroy.RemoveAt(0);
+        for (int i = 0; i < thingsToDestroy.Count; i++) {
+            Instantiate(bloodSplash, thingsToDestroy[i].transform.position, Quaternion.identity);
+            Destroy(thingsToDestroy[i]);
+        }
     }
 }
