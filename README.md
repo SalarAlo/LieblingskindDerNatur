@@ -10,7 +10,7 @@
 
 1. Lade den Build Ordner herunter [`Builds`](Builds).
 2. Extrahiere die ZIP-Datei.
-3. Im extrahierten Ordner findest du eine ausführbare Datei namens "LieblingskindDerNatur.exe".
+3. Im extrahierten Ordner findest du eine ausführbare Datei namens "CVCampProjekt.exe".
 4. Starte diese Datei, um das Spiel zu starten und den Spaß zu beginnen.
    
 ---
@@ -53,5 +53,4 @@ Ein erweitertes **Rock-Paper-Scissors-Ökosystem**, gesteuert über Genetik und 
 Assets/
 ├── Scripts/             # Hauptquellcode (Genetik, AI, Umwelt, Evolution)
 ├── Prefabs/             # Tiere, Pflanzen, UI-Elemente
-├── Materials/           # Optik und Shader
-├── Scenes/              # Spielwelten
+├── Materials/           # Optik
