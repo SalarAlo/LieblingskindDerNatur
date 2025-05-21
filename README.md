@@ -53,5 +53,4 @@ Ein erweitertes **Rock-Paper-Scissors-Ökosystem**, gesteuert über Genetik und 
 Assets/
 ├── Scripts/             # Hauptquellcode (Genetik, AI, Umwelt, Evolution)
 ├── Prefabs/             # Tiere, Pflanzen, UI-Elemente
-├── Materials/           # Optik und Shader
-├── Scenes/              # Spielwelten
+├── Materials/           # Optik
